@@ -1,0 +1,1112 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharma Hardware & Electricals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#185FA5;--blue-light:#E6F1FB;--blue-dark:#0C447C;
+  --green:#3B6D11;--green-light:#EAF3DE;
+  --red:#A32D2D;--red-light:#FCEBEB;
+  --amber:#854F0B;--amber-light:#FAEEDA;
+  --surface:var(--color-background-primary);
+  --bg:var(--color-background-tertiary);
+  --border:var(--color-border-tertiary);
+  --text:var(--color-text-primary);
+  --muted:var(--color-text-secondary);
+  --hint:var(--color-text-tertiary);
+}
+body{font-family:var(--font-sans);color:var(--text);background:var(--bg);}
+
+.header{background:#1A1208;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-icon{width:34px;height:34px;background:#E8650A;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.brand-name{color:#fff;font-size:17px;font-weight:500;}
+.brand-sub{color:rgba(255,255,255,0.45);font-size:11px;margin-top:1px;}
+.role-tabs{display:flex;gap:4px;}
+.rtab{padding:6px 14px;border-radius:var(--border-radius-md);border:none;cursor:pointer;font-size:12px;font-weight:500;font-family:var(--font-sans);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.55);transition:.15s;}
+.rtab.on{background:#E8650A;color:#fff;}
+
+.view{display:none;} .view.on{display:block;}
+
+/* nav within a role */
+.subnav{display:flex;gap:6px;padding:14px 20px 0;border-bottom:0.5px solid var(--border);background:var(--surface);}
+.snav{padding:8px 14px;border-radius:var(--border-radius-md) var(--border-radius-md) 0 0;border:none;cursor:pointer;font-size:13px;font-family:var(--font-sans);background:transparent;color:var(--muted);border-bottom:2px solid transparent;transition:.15s;}
+.snav.on{color:var(--text);font-weight:500;border-bottom:2px solid #E8650A;background:transparent;}
+.subtab{display:none;} .subtab.on{display:block;}
+.pad{padding:18px 20px;}
+
+/* metric cards */
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;}
+.mc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;}
+.mc-l{font-size:11px;color:var(--muted);}
+.mc-v{font-size:20px;font-weight:500;margin-top:3px;}
+.mc-s{font-size:11px;color:var(--hint);margin-top:1px;}
+
+/* section head */
+.sh{font-size:14px;font-weight:500;margin-bottom:12px;}
+
+/* cards grid */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:18px;}
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--border-radius-lg);padding:14px 16px;}
+
+/* khata */
+.khata-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px;}
+.khata-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;}
+.khata-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.ks{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;}
+.ks-v{font-size:13px;font-weight:500;}
+.ks-l{font-size:10px;color:var(--muted);margin-top:1px;}
+.overdue{border-color:#E24B4A;}
+
+/* billing */
+.billing-layout{display:grid;grid-template-columns:1fr 340px;gap:16px;}
+.item-search{width:100%;padding:9px 14px;border:0.5px solid var(--border);border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:14px;background:var(--color-background-secondary);outline:none;margin-bottom:12px;color:var(--text);}
+.item-search:focus{border-color:#185FA5;}
+.item-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-height:300px;overflow-y:auto;}
+.itile{border:0.5px solid var(--border);border-radius:var(--border-radius-md);padding:9px 7px;cursor:pointer;text-align:center;transition:.12s;background:var(--color-background-secondary);}
+.itile:hover{border-color:#185FA5;background:var(--blue-light);}
+.itile.added{border-color:var(--green);background:var(--green-light);}
+.itile-name{font-size:11px;font-weight:500;line-height:1.3;}
+.itile-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.itile-price{font-size:11px;color:#185FA5;margin-top:3px;font-weight:500;}
+
+.bill-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--border-radius-lg);overflow:hidden;}
+.bp-head{padding:12px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.bp-body{padding:14px 16px;}
+.cinput{width:100%;padding:8px 12px;border:0.5px solid var(--border);border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;background:var(--color-background-secondary);outline:none;color:var(--text);margin-bottom:8px;}
+.cinput:focus{border-color:#185FA5;}
+.pay-toggle{display:flex;gap:0;margin-bottom:10px;border:0.5px solid var(--border);border-radius:var(--border-radius-md);overflow:hidden;}
+.ptog{flex:1;padding:7px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;background:transparent;border:none;font-family:var(--font-sans);color:var(--muted);transition:.15s;}
+.ptog.cash-on{background:#444441;color:#fff;}
+.ptog.upi-on{background:#185FA5;color:#fff;}
+.ptog.khata-on{background:#854F0B;color:#fff;}
+.upi-ref{width:100%;padding:7px 12px;border:0.5px solid #185FA5;border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:12px;background:var(--blue-light);outline:none;color:var(--text);margin-bottom:8px;display:none;}
+.bill-items{min-height:100px;margin-bottom:10px;}
+.bempty{display:flex;align-items:center;justify-content:center;height:80px;color:var(--hint);font-size:13px;border:0.5px dashed var(--border);border-radius:var(--border-radius-md);}
+.bitem{display:flex;align-items:center;padding:6px 0;border-bottom:0.5px solid var(--border);gap:7px;}
+.bitem-name{flex:1;font-size:12px;font-weight:500;}
+.bitem-sub{font-size:10px;color:var(--muted);}
+.qbtn{width:20px;height:20px;border-radius:50%;border:0.5px solid var(--border);background:var(--color-background-secondary);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;color:#185FA5;font-family:var(--font-sans);}
+.qnum{font-size:12px;min-width:16px;text-align:center;}
+.bitem-tot{font-size:12px;font-weight:500;min-width:48px;text-align:right;}
+.bdel{color:var(--hint);cursor:pointer;font-size:14px;}
+.bdel:hover{color:#E24B4A;}
+.disc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.disc-label{font-size:12px;color:var(--muted);white-space:nowrap;}
+.disc-input{width:60px;padding:5px 8px;border:0.5px solid var(--border);border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:12px;background:var(--color-background-secondary);outline:none;color:var(--text);}
+.bsummary{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:10px;}
+.srow{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:var(--muted);}
+.srow.tot{font-size:15px;font-weight:500;color:var(--text);padding-top:7px;border-top:0.5px solid var(--border);margin-top:5px;}
+.srow.tot span:last-child{color:#185FA5;}
+.bactions{display:flex;gap:7px;}
+.btn-p{flex:1;padding:9px;background:#185FA5;color:#fff;border:none;border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;font-weight:500;cursor:pointer;}
+.btn-p:hover{background:var(--blue-dark);}
+.btn-wa{padding:9px 12px;background:#25D366;color:#fff;border:none;border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;cursor:pointer;}
+.btn-s{padding:9px 12px;background:var(--color-background-secondary);color:var(--text);border:0.5px solid var(--border);border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;cursor:pointer;}
+
+/* inventory */
+.inv-toolbar{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
+.inv-search{flex:1;padding:9px 14px;border:0.5px solid var(--border);border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;background:var(--surface);outline:none;color:var(--text);}
+.inv-search:focus{border-color:#185FA5;}
+.btn-add{padding:9px 16px;background:#185FA5;color:#fff;border:none;border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;}
+.inv-table{width:100%;border-collapse:collapse;}
+.inv-table th{text-align:left;padding:9px 12px;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:0.5px solid var(--border);background:var(--color-background-secondary);}
+.inv-table td{padding:10px 12px;font-size:13px;border-bottom:0.5px solid var(--border);}
+.inv-table tr:last-child td{border-bottom:none;}
+.inv-table tr:hover td{background:var(--blue-light);}
+.sbadge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
+.sok{background:var(--green-light);color:var(--green);}
+.slow{background:var(--amber-light);color:var(--amber);}
+.sout{background:var(--red-light);color:var(--red);}
+
+/* discount log */
+.disc-log{width:100%;border-collapse:collapse;}
+.disc-log th{text-align:left;padding:9px 12px;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:0.5px solid var(--border);background:var(--color-background-secondary);}
+.disc-log td{padding:10px 12px;font-size:13px;border-bottom:0.5px solid var(--border);}
+.disc-log tr:last-child td{border-bottom:none;}
+.flag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
+.flag-high{background:var(--red-light);color:var(--red);}
+.flag-mid{background:var(--amber-light);color:var(--amber);}
+.flag-ok{background:var(--green-light);color:var(--green);}
+
+/* eod */
+.eod-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--border-radius-lg);padding:20px;max-width:400px;margin:0 auto;}
+.eod-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:14px;}
+.eod-row:last-of-type{border-bottom:none;}
+.eod-label{color:var(--muted);}
+.eod-val{font-weight:500;}
+.gap-ok{color:var(--green);}
+.gap-bad{color:var(--red);}
+.eod-count-input{width:100%;padding:10px 14px;border:0.5px solid #185FA5;border-radius:var(--border-radius-md);font-family:var(--font-sans);font-size:20px;font-weight:500;background:var(--blue-light);outline:none;color:var(--text);text-align:center;margin:14px 0;}
+
+/* receipt overlay */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200;}
+.overlay.on{display:flex;}
+.rcpt{background:#fff;border-radius:var(--border-radius-lg);width:290px;padding:22px 20px;font-family:var(--font-sans);max-height:90vh;overflow-y:auto;}
+.rcpt-logo{text-align:center;margin-bottom:10px;}
+.rcpt-logo b{display:block;font-size:16px;font-weight:500;color:#1A1208;}
+.rcpt-logo small{font-size:11px;color:#7A6A55;}
+.rdiv{border:none;border-top:1px dashed #E8DDD0;margin:9px 0;}
+.rrow{display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:#1A1208;}
+.rtot{display:flex;justify-content:space-between;font-size:15px;font-weight:500;padding:7px 0 0;border-top:1px solid #E8DDD0;margin-top:3px;}
+.rfooter{text-align:center;font-size:11px;color:#7A6A55;margin-top:12px;}
+.rbtns{display:flex;gap:7px;margin-top:12px;}
+.rbtn-close{flex:1;padding:9px;background:#1A1208;color:#fff;border:none;border-radius:8px;font-family:var(--font-sans);font-size:13px;cursor:pointer;}
+.rbtn-wa{flex:1;padding:9px;background:#25D366;color:#fff;border:none;border-radius:8px;font-family:var(--font-sans);font-size:13px;cursor:pointer;}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1A1208;color:#fff;padding:9px 18px;border-radius:var(--border-radius-md);font-size:13px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.on{opacity:1;}
+</style>
+
+<div>
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon"><i class="ti ti-tools" aria-hidden="true" style="font-size:18px;color:#fff;"></i></div>
+    <div>
+      <div class="brand-name">Sharma Hardware & Electricals</div>
+      <div class="brand-sub">Secunderabad, Hyderabad</div>
+    </div>
+  </div>
+  <div class="role-tabs">
+    <button class="rtab on" onclick="setRole('owner',this)"><i class="ti ti-shield-lock" aria-hidden="true"></i> Owner</button>
+    <button class="rtab" onclick="setRole('counter',this)"><i class="ti ti-receipt" aria-hidden="true"></i> Counter</button>
+    <button class="rtab" onclick="setRole('stock',this)"><i class="ti ti-package" aria-hidden="true"></i> Stock</button>
+  </div>
+</div>
+
+<!-- ===== OWNER VIEW ===== -->
+<div id="view-owner" class="view on">
+  <div class="subnav">
+    <button class="snav on" onclick="showSub('owner','dash',this)">Dashboard</button>
+    <button class="snav" onclick="showSub('owner','khata',this)">Khata / उधार</button>
+    <button class="snav" onclick="showSub('owner','discounts',this)">Discount log</button>
+    <button class="snav" onclick="showSub('owner','eod',this)">End of day</button>
+  </div>
+
+  <div id="owner-dash" class="subtab on pad">
+    <div class="mcards">
+      <div class="mc"><div class="mc-l">Today's billing</div><div class="mc-v" style="color:#185FA5" id="o-billing">₹0</div></div>
+      <div class="mc"><div class="mc-l">Cash collected</div><div class="mc-v" id="o-cash">₹0</div></div>
+      <div class="mc"><div class="mc-l">UPI collected</div><div class="mc-v" style="color:#185FA5" id="o-upi">₹0</div></div>
+      <div class="mc"><div class="mc-l">Khata extended</div><div class="mc-v" style="color:#854F0B" id="o-khata-today">₹0</div></div>
+      <div class="mc"><div class="mc-l">Total khata due</div><div class="mc-v" style="color:#A32D2D" id="o-khata-total">₹1,24,500</div></div>
+      <div class="mc"><div class="mc-l">Bills today</div><div class="mc-v" id="o-bills">0</div></div>
+    </div>
+    <p class="sh">Contractor outstanding (Top khata balances)</p>
+    <div class="cgrid" id="owner-contractor-cards"></div>
+    <p class="sh">Today's bills</p>
+    <div class="card" id="owner-txn-wrap">
+      <div style="color:var(--hint);font-size:13px;text-align:center;padding:20px;">No bills yet today</div>
+    </div>
+  </div>
+
+  <div id="owner-khata" class="subtab pad">
+    <p class="sh">Khata ledger — सभी उधार खाते</p>
+    <div id="khata-list"></div>
+  </div>
+
+  <div id="owner-discounts" class="subtab pad">
+    <p class="sh">Discount log — employee-wise</p>
+    <div class="card" style="overflow-x:auto;">
+      <table class="disc-log" id="disc-log-table">
+        <thead><tr><th>Bill #</th><th>Employee</th><th>Customer</th><th>Bill amt</th><th>Discount</th><th>%</th><th>Flag</th></tr></thead>
+        <tbody id="disc-log-body"><tr><td colspan="7" style="text-align:center;color:var(--hint);padding:20px;">No discounts given yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="owner-eod" class="subtab pad">
+    <div style="max-width:600px;margin:0 auto;">
+      <p class="sh">Today's expenses / आज का खर्च</p>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <select class="cinput" id="exp-cat" style="flex:1;margin-bottom:0;">
+          <option value="loading">Loading coolie</option>
+          <option value="transport">Auto / Transport</option>
+          <option value="chai">Chai-Paani</option>
+          <option value="electricity">Electricity</option>
+          <option value="rent">Rent</option>
+          <option value="salary">Staff salary</option>
+          <option value="misc">Miscellaneous</option>
+        </select>
+        <input type="number" class="cinput" id="exp-amt" placeholder="Amount (₹)" style="flex:1;margin-bottom:0;" onkeydown="if(event.key==='Enter')addExpense()">
+        <button class="btn-p" onclick="addExpense()" style="flex:0 0 auto;padding:9px 14px;">Add</button>
+      </div>
+      <div id="exp-list" style="margin-bottom:20px;font-size:13px;"><div style="color:var(--hint);text-align:center;padding:10px;">No expenses today</div></div>
+    </div>
+
+    <div class="eod-card">
+      <p class="sh" style="text-align:center;margin-bottom:16px;">End of day reconciliation</p>
+      <div class="eod-row"><span class="eod-label">Opening float</span><span class="eod-val" id="eod-float">₹0</span></div>
+      <div class="eod-row"><span class="eod-label">Total billed</span><span class="eod-val" id="eod-billed">₹0</span></div>
+      <div class="eod-row"><span class="eod-label">UPI received</span><span class="eod-val" id="eod-upi">₹0</span></div>
+      <div class="eod-row"><span class="eod-label">Khata extended</span><span class="eod-val" id="eod-khata">₹0</span></div>
+      <div class="eod-row"><span class="eod-label">Today's expenses</span><span class="eod-val" id="eod-expenses">₹0</span></div>
+      <div class="eod-row"><span class="eod-label">Expected cash</span><span class="eod-val" id="eod-expected">₹0</span></div>
+      <label style="font-size:12px;color:var(--muted);">Opening float at start of day (₹)
+        <span style="font-size:11px;color:var(--hint);"> — set once, resets daily</span>
+      </label>
+      <input type="number" class="eod-count-input" id="eod-float-input" placeholder="0" oninput="setFloat(this.value)">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-top:12px;">Enter cash in drawer now (₹)</label>
+      <input type="number" class="eod-count-input" id="eod-count" placeholder="0" oninput="calcEOD()">
+      <div class="eod-row" style="border-top:0.5px solid var(--border);margin-top:4px;">
+        <span class="eod-label" style="font-weight:500;">Difference</span>
+        <span class="eod-val" id="eod-diff" style="font-size:18px;">—</span>
+      </div>
+      <div id="eod-msg" style="font-size:12px;text-align:center;margin-top:10px;color:var(--muted);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COUNTER VIEW ===== -->
+<div id="view-counter" class="view">
+  <div class="subnav">
+    <button class="snav on" onclick="showSub('counter','bill',this)">New bill</button>
+    <button class="snav" onclick="showSub('counter','check-khata',this)">Check khata</button>
+  </div>
+
+  <div id="counter-bill" class="subtab on pad">
+    <div class="billing-layout">
+      <div>
+        <div class="card" style="margin-bottom:0;">
+          <p class="sh">Items — सामान चुनें</p>
+          <input type="text" class="item-search" placeholder="Search item / आइटम खोजें..." oninput="filterItems(this.value)">
+          <div class="item-grid" id="item-grid"></div>
+        </div>
+      </div>
+      <div class="bill-panel">
+        <div class="bp-head"><span style="font-size:14px;font-weight:500;">Bill / बिल</span><span id="bc-count" style="font-size:12px;color:var(--muted);">0 items</span></div>
+        <div class="bp-body">
+          <input type="text" class="cinput" id="bc-cust" placeholder="Customer / ग्राहक का नाम">
+          <input type="text" class="cinput" id="bc-phone" placeholder="Phone (WhatsApp)">
+          <div class="pay-toggle">
+            <button class="ptog cash-on" id="ptog-cash" onclick="setPayMode('cash')">💵 Cash</button>
+            <button class="ptog" id="ptog-upi" onclick="setPayMode('upi')">📱 UPI</button>
+            <button class="ptog" id="ptog-khata" onclick="setPayMode('khata')">📒 Khata</button>
+          </div>
+          <input type="text" class="upi-ref" id="bc-upi-ref" placeholder="UPI ref # (optional)">
+          <select class="cinput" id="bc-contractor" style="display:none;margin-bottom:8px;">
+            <option value="">Select contractor / ठेकेदार चुनें</option>
+          </select>
+          <div class="bill-items" id="bc-items"><div class="bempty">Add items →</div></div>
+          <div class="disc-row">
+            <span class="disc-label">Discount %</span>
+            <input type="number" class="disc-input" id="bc-disc" value="0" min="0" max="50" oninput="renderBill()">
+            <span style="font-size:12px;color:var(--muted);" id="disc-amt"></span>
+          </div>
+          <div class="bsummary">
+            <div class="srow"><span>Subtotal</span><span id="bc-sub">₹0</span></div>
+            <div class="srow"><span>Discount</span><span id="bc-disc-show">₹0</span></div>
+            <div class="srow tot"><span>Total</span><span id="bc-tot">₹0</span></div>
+          </div>
+          <div class="bactions">
+            <button class="btn-s" onclick="clearBill()">Clear</button>
+            <button class="btn-p" onclick="printBill()">Print bill</button>
+            <button class="btn-wa" onclick="waBill()" title="WhatsApp">📲</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="counter-check-khata" class="subtab pad">
+    <p class="sh">Check contractor khata balance</p>
+    <input type="text" class="inv-search" style="max-width:320px;margin-bottom:14px;" placeholder="Search contractor..." oninput="filterKhataSearch(this.value)">
+    <div id="khata-search-results"></div>
+  </div>
+</div>
+
+<!-- ===== STOCK VIEW ===== -->
+<div id="view-stock" class="view">
+  <div class="subnav">
+    <button class="snav on" onclick="showSub('stock','inv',this)">Inventory</button>
+    <button class="snav" onclick="showSub('stock','alerts',this)">Alerts</button>
+  </div>
+  <div id="stock-inv" class="subtab on pad">
+    <div class="inv-toolbar">
+      <input type="text" class="inv-search" placeholder="Search item..." oninput="filterInv(this.value)">
+      <button class="btn-add" onclick="showAddItemForm()">+ Add item</button>
+    </div>
+    <div class="card" style="overflow-x:auto;">
+      <table class="inv-table">
+        <thead><tr><th>Item</th><th>Hindi</th><th>Category</th><th>Unit</th><th>Price</th><th>Cost</th><th>Stock</th><th>Status</th></tr></thead>
+        <tbody id="inv-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="stock-alerts" class="subtab pad">
+    <p class="sh">Low stock & out of stock alerts</p>
+    <div id="alert-list"></div>
+  </div>
+</div>
+
+<!-- Receipt overlay -->
+<div class="overlay" id="overlay">
+  <div class="rcpt" id="rcpt-content"></div>
+</div>
+
+<!-- Payment recording overlay -->
+<div class="overlay" id="payment-overlay">
+  <div class="rcpt" style="width:340px;padding:22px 20px;">
+    <p style="font-size:15px;font-weight:500;margin-bottom:14px;">Record payment — <span id="pay-contractor-name"></span></p>
+    <input type="number" class="cinput" id="pay-amount" placeholder="Amount (₹)">
+    <select class="cinput" id="pay-mode">
+      <option value="cash">Cash</option>
+      <option value="upi">UPI</option>
+      <option value="cheque">Cheque</option>
+    </select>
+    <input type="text" class="cinput" id="pay-ref" placeholder="Reference / UPI ref / Cheque no.">
+    <div style="display:flex;gap:7px;margin-top:8px;">
+      <button class="btn-s" onclick="closeOverlay('payment-overlay')">Cancel</button>
+      <button class="btn-p" onclick="recordPayment()">Record payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Item overlay -->
+<div class="overlay" id="item-overlay">
+  <div class="rcpt" style="width:360px;padding:22px 20px;max-height:90vh;overflow-y:auto;">
+    <p style="font-size:15px;font-weight:500;margin-bottom:14px;" id="item-modal-title">Add item</p>
+    <input type="text" class="cinput" id="item-name" placeholder="Item name">
+    <input type="text" class="cinput" id="item-hi" placeholder="Hindi name">
+    <select class="cinput" id="item-cat">
+      <option value="Plumbing">Plumbing</option><option value="Electrical">Electrical</option>
+      <option value="Construction">Construction</option><option value="Paint">Paint</option>
+      <option value="Tools">Tools</option><option value="Fasteners">Fasteners</option>
+    </select>
+    <select class="cinput" id="item-unit">
+      <option value="pc">Piece</option><option value="ft">Feet</option><option value="mtr">Meter</option>
+      <option value="bag">Bag</option><option value="set">Set</option><option value="roll">Roll</option>
+      <option value="can">Can</option><option value="sheet">Sheet</option><option value="pack">Pack</option>
+    </select>
+    <input type="number" class="cinput" id="item-price" placeholder="Selling price (₹)" step="0.01">
+    <input type="number" class="cinput" id="item-cost" placeholder="Cost price (₹)" step="0.01">
+    <input type="number" class="cinput" id="item-stock" placeholder="Stock qty">
+    <div style="display:flex;gap:7px;margin-top:10px;">
+      <button class="btn-s" onclick="closeOverlay('item-overlay')">Cancel</button>
+      <button class="btn-p" onclick="saveItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ===== PERSISTENCE LAYER =====
+const DB = {
+  save(key, data) {
+    try { localStorage.setItem('hs_' + key, JSON.stringify(data)); return true; }
+    catch (e) { console.warn('DB save failed:', key, e); return false; }
+  },
+  load(key, fallback) {
+    try {
+      const raw = localStorage.getItem('hs_' + key);
+      return raw !== null ? JSON.parse(raw) : fallback;
+    } catch (e) { return fallback; }
+  }
+};
+
+// ===== SEED DATA =====
+const SEED_ITEMS = [
+  {id:1,name:"GI Pipe",hi:"जीआई पाइप",cat:"Plumbing",unit:"ft",price:85,cost:60,stock:320},
+  {id:2,name:"PVC Pipe",hi:"पीवीसी पाइप",cat:"Plumbing",unit:"ft",price:35,cost:22,stock:480},
+  {id:3,name:"Copper Wire 2.5mm",hi:"तांबे का तार",cat:"Electrical",unit:"mtr",price:75,cost:55,stock:600},
+  {id:4,name:"MCB Switch",hi:"एमसीबी स्विच",cat:"Electrical",unit:"pc",price:180,cost:120,stock:45},
+  {id:5,name:"Cement Bag",hi:"सीमेंट",cat:"Construction",unit:"bag",price:380,cost:310,stock:8},
+  {id:6,name:"M-Seal",hi:"एम-सील",cat:"Plumbing",unit:"pc",price:65,cost:40,stock:60},
+  {id:7,name:'Paint Brush 4"',hi:"पेंट ब्रश",cat:"Paint",unit:"pc",price:90,cost:55,stock:30},
+  {id:8,name:"Angle Grinder Disc",hi:"ग्राइंडर डिस्क",cat:"Tools",unit:"pc",price:120,cost:80,stock:3},
+  {id:9,name:"3-pin Socket",hi:"सॉकेट",cat:"Electrical",unit:"pc",price:95,cost:60,stock:80},
+  {id:10,name:"Nuts & Bolts Set",hi:"नट-बोल्ट",cat:"Fasteners",unit:"set",price:45,cost:25,stock:150},
+  {id:11,name:"Plumber Tape",hi:"टेप",cat:"Plumbing",unit:"roll",price:25,cost:12,stock:90},
+  {id:12,name:"WD-40 Spray",hi:"डब्ल्यूडी-40",cat:"Tools",unit:"can",price:320,cost:220,stock:2},
+  {id:13,name:"Sandpaper",hi:"सैंडपेपर",cat:"Paint",unit:"sheet",price:15,cost:8,stock:200},
+  {id:14,name:"Cable Ties",hi:"केबल टाई",cat:"Electrical",unit:"pack",price:55,cost:30,stock:0},
+  {id:15,name:"CPVC Elbow",hi:"सीपीवीसी एल्बो",cat:"Plumbing",unit:"pc",price:28,cost:15,stock:180},
+];
+const SEED_CONTRACTORS = [
+  {name:"Raju Construction",hi:"राजू कंस्ट्रक्शन",balance:28400,limit:50000,lastPaid:"3 days ago",overdue:false},
+  {name:"Suresh Builders",hi:"सुरेश बिल्डर्स",balance:45200,limit:40000,lastPaid:"18 days ago",overdue:true},
+  {name:"Mahesh & Sons",hi:"महेश एंड संस",balance:12800,limit:30000,lastPaid:"1 day ago",overdue:false},
+  {name:"Venkat Electricals",hi:"वेंकट इलेक्ट्रिकल्स",balance:8600,limit:20000,lastPaid:"5 days ago",overdue:false},
+  {name:"Ram Plumbers",hi:"राम प्लंबर्स",balance:18900,limit:25000,lastPaid:"22 days ago",overdue:true},
+  {name:"Lakshmi Interiors",hi:"लक्ष्मी इंटीरियर्स",balance:10600,limit:20000,lastPaid:"2 days ago",overdue:false},
+];
+
+// ===== STATE =====
+let cart = [], payMode = 'cash';
+let ITEMS = [], CONTRACTORS = [], transactions = [], discountLog = [];
+let payments = [], expenses = [];
+let billCount = 0, openingFloat = 0, lastEODDate = '';
+let editingItemId = null;
+
+// ===== INIT =====
+function initApp() {
+  ITEMS = DB.load('items', SEED_ITEMS);
+  CONTRACTORS = DB.load('contractors', SEED_CONTRACTORS);
+  transactions = DB.load('transactions', []);
+  discountLog = DB.load('discountLog', []);
+  payments = DB.load('payments', []);
+  expenses = DB.load('expenses', []);
+  billCount = DB.load('billCount', 0);
+  openingFloat = DB.load('openingFloat', 0);
+  lastEODDate = DB.load('lastEODDate', '');
+
+  const today = new Date().toDateString();
+  if (lastEODDate !== today) {
+    openingFloat = 0;
+    lastEODDate = today;
+    DB.save('openingFloat', 0);
+    DB.save('lastEODDate', today);
+  }
+
+  renderAll();
+}
+
+function renderAll() {
+  updateOwnerDash();
+  initItems();
+  initInventory();
+  initKhata();
+  initOwnerContractors();
+  renderExpenses();
+  populateContractorSelect();
+}
+
+// ===== DERIVED TOTALS =====
+function getTodayTotals() {
+  const today = new Date().toDateString();
+  const todaysTxns = transactions.filter(t =>
+    !t.cancelled && new Date(t.createdAt).toDateString() === today
+  );
+  return {
+    sales: todaysTxns.reduce((s, t) => s + t.tot, 0),
+    cash: todaysTxns.filter(t => t.payMode === 'cash').reduce((s, t) => s + t.tot, 0),
+    upi: todaysTxns.filter(t => t.payMode === 'upi').reduce((s, t) => s + t.tot, 0),
+    khata: todaysTxns.filter(t => t.payMode === 'khata').reduce((s, t) => s + t.tot, 0),
+    count: todaysTxns.length
+  };
+}
+
+function getTodayExpenses() {
+  const today = new Date().toDateString();
+  return expenses.filter(e => new Date(e.date).toDateString() === today)
+    .reduce((s, e) => s + e.amount, 0);
+}
+
+// ===== ITEM GRID =====
+function initItems(f) {
+  const q = (f || '').toLowerCase();
+  const g = document.getElementById('item-grid');
+  const fl = ITEMS.filter(i => i.name.toLowerCase().includes(q) || i.hi.includes(q) || i.cat.toLowerCase().includes(q));
+  g.innerHTML = fl.map(i => {
+    const inC = cart.find(c => c.id === i.id);
+    const dis = i.stock === 0;
+    return '<div class="itile' + (inC ? ' added' : '') + '"' + (dis ? ' style="opacity:.4;pointer-events:none"' : '') + ' onclick="addItem(' + i.id + ')">' +
+      '<div class="itile-name">' + i.name + '</div>' +
+      '<div class="itile-sub">' + i.hi + '</div>' +
+      '<div class="itile-price">₹' + i.price + '/' + i.unit + '</div></div>';
+  }).join('');
+}
+function filterItems(v) { initItems(v); }
+
+function addItem(id) {
+  const it = ITEMS.find(i => i.id === id);
+  if (!it || it.stock === 0) return;
+  const ex = cart.find(c => c.id === id);
+  const currentQty = ex ? ex.qty : 0;
+  if (currentQty + 1 > it.stock) {
+    showToast('Only ' + it.stock + ' in stock / सिर्फ ' + it.stock + ' बचे हैं');
+    return;
+  }
+  if (ex) ex.qty++; else cart.push({ ...it, qty: 1 });
+  renderBill();
+  initItems(document.querySelector('.item-search').value);
+}
+function changeQty(id, d) {
+  const cartItem = cart.find(c => c.id === id);
+  if (!cartItem) return;
+  if (d > 0) {
+    const masterItem = ITEMS.find(i => i.id === id);
+    if (masterItem && cartItem.qty + d > masterItem.stock) {
+      showToast('Only ' + masterItem.stock + ' in stock / सिर्फ ' + masterItem.stock + ' बचे हैं');
+      return;
+    }
+  }
+  cartItem.qty += d;
+  if (cartItem.qty <= 0) cart = cart.filter(c => c.id !== id);
+  renderBill();
+  initItems(document.querySelector('.item-search') ? document.querySelector('.item-search').value : '');
+}
+
+function renderBill() {
+  const cont = document.getElementById('bc-items');
+  const sub = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const disc = Math.min(50, Math.max(0, +document.getElementById('bc-disc').value || 0));
+  const discAmt = Math.round(sub * disc / 100);
+  const tot = sub - discAmt;
+  document.getElementById('bc-count').textContent = cart.length + ' item' + (cart.length !== 1 ? 's' : '');
+  if (cart.length === 0) { cont.innerHTML = '<div class="bempty">Add items →</div>'; }
+  else {
+    cont.innerHTML = cart.map(c => '<div class="bitem">' +
+      '<div><div class="bitem-name">' + c.name + '</div><div class="bitem-sub">' + c.hi + ' · ₹' + c.price + '/' + c.unit + '</div></div>' +
+      '<div style="display:flex;align-items:center;gap:5px;">' +
+      '<button class="qbtn" onclick="changeQty(' + c.id + ',-1)">−</button>' +
+      '<span class="qnum">' + c.qty + '</span>' +
+      '<button class="qbtn" onclick="changeQty(' + c.id + ',1)">+</button></div>' +
+      '<span class="bitem-tot">₹' + (c.price * c.qty) + '</span>' +
+      '<span class="bdel" onclick="changeQty(' + c.id + ',-99)">×</span></div>').join('');
+  }
+  document.getElementById('bc-sub').textContent = '₹' + sub.toLocaleString('en-IN');
+  document.getElementById('bc-disc-show').textContent = discAmt > 0 ? '-₹' + discAmt : '₹0';
+  document.getElementById('disc-amt').textContent = discAmt > 0 ? '(₹' + discAmt + ' off)' : '';
+  document.getElementById('bc-tot').textContent = '₹' + tot.toLocaleString('en-IN');
+}
+
+// ===== PAYMENT MODE =====
+function setPayMode(m) {
+  payMode = m;
+  ['cash', 'upi', 'khata'].forEach(x => {
+    const b = document.getElementById('ptog-' + x);
+    b.className = 'ptog' + (m === x ? ' ' + x + '-on' : '');
+  });
+  document.getElementById('bc-upi-ref').style.display = m === 'upi' ? 'block' : 'none';
+  document.getElementById('bc-contractor').style.display = m === 'khata' ? 'block' : 'none';
+}
+
+function populateContractorSelect() {
+  const sel = document.getElementById('bc-contractor');
+  sel.innerHTML = '<option value="">Select contractor / ठेकेदार चुनें</option>' +
+    CONTRACTORS.map(c => '<option value="' + c.name.replace(/"/g, '&quot;') + '">' + c.name + ' (' + c.hi + ')</option>').join('');
+}
+
+function clearBill() {
+  cart = [];
+  document.getElementById('bc-cust').value = '';
+  document.getElementById('bc-phone').value = '';
+  document.getElementById('bc-disc').value = '0';
+  document.getElementById('bc-upi-ref').value = '';
+  document.getElementById('bc-contractor').value = '';
+  renderBill();
+  initItems();
+}
+
+function getBillData() {
+  const name = document.getElementById('bc-cust').value || 'Walk-in';
+  const phone = document.getElementById('bc-phone').value.trim();
+  const upiRef = document.getElementById('bc-upi-ref').value.trim();
+  const contractorName = document.getElementById('bc-contractor').value;
+  const disc = Math.min(50, Math.max(0, +document.getElementById('bc-disc').value || 0));
+  const sub = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  const discAmt = Math.round(sub * disc / 100);
+  const tot = sub - discAmt;
+  return { name, phone, upiRef, contractorName, disc, sub, discAmt, tot, items: [...cart], now: new Date() };
+}
+
+// ===== RECORD BILL =====
+function recordBill(d) {
+  billCount++;
+  DB.save('billCount', billCount);
+
+  // Decrement stock
+  d.items.forEach(c => {
+    const item = ITEMS.find(i => i.id === c.id);
+    if (item) item.stock -= c.qty;
+  });
+  DB.save('items', ITEMS);
+
+  // Update contractor balance if khata
+  if (payMode === 'khata' && d.contractorName) {
+    const contractor = CONTRACTORS.find(c => c.name === d.contractorName);
+    if (contractor) {
+      contractor.balance += d.tot;
+      contractor.lastPaid = 'Today';
+      contractor.overdue = false;
+      DB.save('contractors', CONTRACTORS);
+    }
+  }
+
+  // Save transaction with line items
+  transactions.push({
+    id: billCount,
+    customer: d.name,
+    payMode: payMode,
+    tot: d.tot,
+    disc: d.disc,
+    discAmt: d.discAmt,
+    contractorName: d.contractorName || '',
+    items: d.items.map(c => ({ id: c.id, name: c.name, qty: c.qty, price: c.price, cost: c.cost })),
+    createdAt: new Date().toISOString(),
+    cancelled: false
+  });
+  DB.save('transactions', transactions);
+
+  // Log discount
+  if (d.disc > 0) {
+    discountLog.push({
+      bill: billCount,
+      employee: 'Rajesh (Counter)',
+      customer: d.name,
+      amt: d.tot + d.discAmt,
+      disc: d.discAmt,
+      pct: d.disc
+    });
+    DB.save('discountLog', discountLog);
+  }
+
+  renderAll();
+}
+
+// ===== DASHBOARD =====
+function updateOwnerDash() {
+  const t = getTodayTotals();
+  const totalKhataDue = CONTRACTORS.reduce((sum, c) => sum + c.balance, 0);
+  const todayExp = getTodayExpenses();
+
+  document.getElementById('o-billing').textContent = '₹' + t.sales.toLocaleString('en-IN');
+  document.getElementById('o-cash').textContent = '₹' + t.cash.toLocaleString('en-IN');
+  document.getElementById('o-upi').textContent = '₹' + t.upi.toLocaleString('en-IN');
+  document.getElementById('o-khata-today').textContent = '₹' + t.khata.toLocaleString('en-IN');
+  document.getElementById('o-bills').textContent = t.count;
+
+  const khataTotalEl = document.getElementById('o-khata-total');
+  if (totalKhataDue >= 10000000) {
+    khataTotalEl.textContent = '₹' + (totalKhataDue / 100000).toFixed(1) + 'L';
+  } else {
+    khataTotalEl.textContent = '₹' + totalKhataDue.toLocaleString('en-IN');
+  }
+
+  document.getElementById('eod-float').textContent = '₹' + openingFloat.toLocaleString('en-IN');
+  document.getElementById('eod-billed').textContent = '₹' + t.sales.toLocaleString('en-IN');
+  document.getElementById('eod-upi').textContent = '₹' + t.upi.toLocaleString('en-IN');
+  document.getElementById('eod-khata').textContent = '₹' + t.khata.toLocaleString('en-IN');
+  document.getElementById('eod-expenses').textContent = '-₹' + todayExp.toLocaleString('en-IN');
+  document.getElementById('eod-expected').textContent = '₹' + (openingFloat + t.cash - todayExp).toLocaleString('en-IN');
+
+  document.getElementById('eod-float-input').value = openingFloat || '';
+  calcEOD();
+
+  renderTxnLog();
+  renderDiscLog();
+}
+
+function renderTxnLog() {
+  const w = document.getElementById('owner-txn-wrap');
+  const today = new Date().toDateString();
+  const todaysTxns = transactions.filter(t => !t.cancelled && new Date(t.createdAt).toDateString() === today);
+  if (todaysTxns.length === 0) {
+    w.innerHTML = '<div style="color:var(--hint);font-size:13px;text-align:center;padding:20px;">No bills yet today</div>';
+    return;
+  }
+  const payLabel = { cash: '💵 Cash', upi: '📱 UPI', khata: '📒 Khata' };
+  w.innerHTML = '<table style="width:100%;border-collapse:collapse;">' +
+    '<thead><tr>' +
+    '<th style="text-align:left;padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);">#</th>' +
+    '<th style="text-align:left;padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);">Customer</th>' +
+    '<th style="text-align:left;padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);">Payment</th>' +
+    '<th style="text-align:right;padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);">Amount</th>' +
+    '<th style="text-align:center;padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:0.5px solid var(--border);">Action</th>' +
+    '</tr></thead><tbody>' +
+    todaysTxns.map(t => '<tr>' +
+      '<td style="padding:8px 10px;font-size:13px;border-bottom:0.5px solid var(--border);color:var(--muted);">#' + t.id + '</td>' +
+      '<td style="padding:8px 10px;font-size:13px;border-bottom:0.5px solid var(--border);">' + t.customer + '</td>' +
+      '<td style="padding:8px 10px;font-size:13px;border-bottom:0.5px solid var(--border);">' + payLabel[t.payMode] + (t.disc > 0 ? ' · <span style="color:#A32D2D;font-size:11px;">' + t.disc + '% disc</span>' : '') + '</td>' +
+      '<td style="padding:8px 10px;font-size:13px;border-bottom:0.5px solid var(--border);text-align:right;font-weight:500;">₹' + t.tot.toLocaleString('en-IN') + '</td>' +
+      '<td style="padding:8px 10px;font-size:13px;border-bottom:0.5px solid var(--border);text-align:center;"><span style="color:var(--hint);font-size:11px;cursor:pointer;" onclick="reprintBill(' + t.id + ')">🖨️</span></td>' +
+      '</tr>').join('') +
+    '</tbody></table>';
+}
+
+function renderDiscLog() {
+  const body = document.getElementById('disc-log-body');
+  if (discountLog.length === 0) {
+    body.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--hint);padding:20px;">No discounts given yet</td></tr>';
+    return;
+  }
+  body.innerHTML = discountLog.map(d => {
+    const flagClass = d.pct >= 20 ? 'flag-high' : d.pct >= 10 ? 'flag-mid' : 'flag-ok';
+    const flagLabel = d.pct >= 20 ? 'High' : d.pct >= 10 ? 'Review' : 'OK';
+    return '<tr>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);">#' + d.bill + '</td>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);">' + d.employee + '</td>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);">' + d.customer + '</td>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);">₹' + d.amt.toLocaleString('en-IN') + '</td>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);">₹' + d.disc + '</td>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);">' + d.pct + '%</td>' +
+      '<td style="padding:9px 12px;font-size:13px;border-bottom:0.5px solid var(--border);"><span class="flag ' + flagClass + '">' + flagLabel + '</span></td>' +
+      '</tr>';
+  }).join('');
+}
+
+// ===== EOD =====
+function setFloat(v) {
+  openingFloat = +v || 0;
+  DB.save('openingFloat', openingFloat);
+  updateOwnerDash();
+}
+
+function calcEOD() {
+  const todayExp = getTodayExpenses();
+  const t = getTodayTotals();
+  const expected = openingFloat + t.cash - todayExp;
+  const counted = +document.getElementById('eod-count').value || 0;
+  const diff = counted - expected;
+  const el = document.getElementById('eod-diff');
+  const msg = document.getElementById('eod-msg');
+  el.textContent = (diff >= 0 ? '+' : '') + '₹' + diff.toLocaleString('en-IN');
+  el.className = 'eod-val ' + (Math.abs(diff) < 10 ? 'gap-ok' : diff < 0 ? 'gap-bad' : 'gap-ok');
+  msg.textContent = Math.abs(diff) < 10 ? 'All good — cash matches perfectly.'
+    : diff < 0 ? 'Shortage of ₹' + Math.abs(diff) + '. Investigate before closing.'
+    : 'Surplus of ₹' + Math.abs(diff) + '. Check if any bill was entered incorrectly.';
+}
+
+// ===== EXPENSES =====
+function addExpense() {
+  const cat = document.getElementById('exp-cat').value;
+  const amt = +document.getElementById('exp-amt').value;
+  if (!amt || amt <= 0) { showToast('Enter a valid amount'); return; }
+  expenses.push({ id: Date.now(), cat, amount: amt, date: new Date().toISOString() });
+  DB.save('expenses', expenses);
+  document.getElementById('exp-amt').value = '';
+  renderExpenses();
+  updateOwnerDash();
+}
+
+function renderExpenses() {
+  const el = document.getElementById('exp-list');
+  const today = new Date().toDateString();
+  const todayExp = expenses.filter(e => new Date(e.date).toDateString() === today);
+  if (todayExp.length === 0) {
+    el.innerHTML = '<div style="color:var(--hint);text-align:center;padding:10px;">No expenses today</div>';
+    return;
+  }
+  const catLabels = { loading: 'Loading coolie', transport: 'Auto / Transport', chai: 'Chai-Paani', electricity: 'Electricity', rent: 'Rent', salary: 'Staff salary', misc: 'Miscellaneous' };
+  el.innerHTML = todayExp.map(e =>
+    '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border);">' +
+    '<span style="color:var(--muted);font-size:12px;">' + (catLabels[e.cat] || e.cat) + '</span>' +
+    '<span style="font-weight:500;font-size:13px;">-₹' + e.amount.toLocaleString('en-IN') + '</span></div>'
+  ).join('');
+}
+
+// ===== RECEIPT =====
+function buildReceiptHTML(d) {
+  const t = d.now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const dt = d.now.toLocaleDateString('en-IN');
+  const pm = { cash: '💵 Cash', upi: '📱 UPI', khata: '📒 Khata / उधार' };
+  return '<div class="rcpt-logo"><b>Sharma Hardware & Electricals</b><small>Secunderabad, Hyderabad</small></div>' +
+    '<hr class="rdiv">' +
+    '<div class="rrow"><span><b>' + d.name + '</b></span><span style="color:#7A6A55;">Bill #' + billCount + '</span></div>' +
+    '<div class="rrow" style="color:#7A6A55;font-size:11px;"><span>' + dt + ', ' + t + '</span><span>' + pm[payMode] + '</span></div>' +
+    '<hr class="rdiv">' +
+    d.items.map(c => '<div class="rrow"><span>' + c.name + ' × ' + c.qty + ' ' + c.unit + '</span><span>₹' + (c.price * c.qty) + '</span></div>').join('') +
+    (d.discAmt > 0 ? '<div class="rrow" style="color:#A32D2D;"><span>Discount (' + d.disc + '%)</span><span>-₹' + d.discAmt + '</span></div>' : '') +
+    '<div class="rtot"><span>Total</span><span style="color:#185FA5;">₹' + d.tot.toLocaleString('en-IN') + '</span></div>' +
+    (payMode === 'upi' && d.upiRef ? '<div class="rrow" style="color:#7A6A55;font-size:11px;margin-top:4px;"><span>UPI Ref</span><span>' + d.upiRef + '</span></div>' : '') +
+    '<div class="rfooter">Thank you for your business<br>धन्यवाद 🙏</div>' +
+    '<div class="rbtns">' +
+    '<button class="rbtn-close" onclick="closeOverlay(\'overlay\')">Done</button>' +
+    '<button class="rbtn-wa" onclick="sendWA(\'' + encodeURIComponent(buildWAMsg(d)) + '\',\'' + d.phone + '\')">📲 WhatsApp</button></div>';
+}
+
+function buildWAMsg(d) {
+  const pm = { cash: 'Cash', upi: 'UPI' + (d.upiRef ? ' (Ref: ' + d.upiRef + ')' : ''), khata: 'Khata / उधार' };
+  const lines = d.items.map(c => '  ' + c.name + ' × ' + c.qty + ' ' + c.unit + ' — ₹' + (c.price * c.qty)).join('\n');
+  return '🔧 *Sharma Hardware & Electricals*\nSecunderabad, Hyderabad\n\nBill #' + billCount + ' | ' + d.now.toLocaleDateString('en-IN') +
+    '\nCustomer: *' + d.name + '*\n\n' + lines +
+    (d.discAmt > 0 ? '\n  Discount (' + d.disc + '%) — -₹' + d.discAmt : '') +
+    '\n\n*Total: ₹' + d.tot.toLocaleString('en-IN') + '*\nPayment: ' + pm[payMode] +
+    '\n\nThank you! धन्यवाद 🙏';
+}
+
+function sendWA(msg, phone) {
+  const n = phone.replace(/\D/g, '');
+  window.open((n ? 'https://wa.me/91' + n : 'https://wa.me/') + '?text=' + msg, '_blank');
+}
+
+function printBill() {
+  if (cart.length === 0) { showToast('Add items first'); return; }
+  const d = getBillData();
+  recordBill(d);
+  document.getElementById('rcpt-content').innerHTML = buildReceiptHTML(d);
+  document.getElementById('overlay').classList.add('on');
+  clearBill();
+}
+
+function waBill() {
+  if (cart.length === 0) { showToast('Add items first'); return; }
+  const d = getBillData();
+  recordBill(d);
+  sendWA(encodeURIComponent(buildWAMsg(d)), d.phone);
+  showToast('Opening WhatsApp...');
+  clearBill();
+}
+
+function reprintBill(id) {
+  const txn = transactions.find(t => t.id === id);
+  if (!txn) { showToast('Bill not found'); return; }
+  const pm = { cash: '💵 Cash', upi: '📱 UPI', khata: '📒 Khata / उधार' };
+  const date = new Date(txn.createdAt);
+  const d = {
+    name: txn.customer,
+    now: date,
+    items: txn.items.map(i => ({ name: i.name, qty: i.qty, price: i.price, unit: 'pc' })),
+    disc: txn.disc,
+    discAmt: txn.discAmt,
+    tot: txn.tot,
+    phone: ''
+  };
+  const html = '<div class="rcpt-logo"><b>Sharma Hardware & Electricals</b><small>Secunderabad, Hyderabad</small></div>' +
+    '<div class="rrow"><span style="color:#7A6A55;font-size:11px;">Reprint from ' + date.toLocaleDateString('en-IN') + '</span></div>' +
+    '<hr class="rdiv">' +
+    '<div class="rrow"><span><b>' + txn.customer + '</b></span><span style="color:#7A6A55;">Bill #' + txn.id + '</span></div>' +
+    '<hr class="rdiv">' +
+    d.items.map(c => '<div class="rrow"><span>' + c.name + ' × ' + c.qty + '</span><span>₹' + (c.price * c.qty) + '</span></div>').join('') +
+    (d.discAmt > 0 ? '<div class="rrow" style="color:#A32D2D;"><span>Discount</span><span>-₹' + d.discAmt + '</span></div>' : '') +
+    '<div class="rtot"><span>Total</span><span style="color:#185FA5;">₹' + d.tot.toLocaleString('en-IN') + '</span></div>' +
+    '<div class="rbtns"><button class="rbtn-close" onclick="closeOverlay(\'overlay\')">Close</button></div>';
+  document.getElementById('rcpt-content').innerHTML = html;
+  document.getElementById('overlay').classList.add('on');
+}
+
+// ===== OVERLAYS =====
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('on');
+}
+
+// ===== INVENTORY =====
+function initInventory(f) {
+  const q = (f || '').toLowerCase();
+  const body = document.getElementById('inv-body');
+  const fl = ITEMS.filter(i => i.name.toLowerCase().includes(q) || i.hi.includes(q) || i.cat.toLowerCase().includes(q));
+  body.innerHTML = fl.map(i => {
+    const s = i.stock === 0 ? 'sout' : i.stock <= 5 ? 'slow' : 'sok';
+    const sl = i.stock === 0 ? 'Out of stock' : i.stock <= 5 ? 'Low stock' : 'In stock';
+    return '<tr style="cursor:pointer;" onclick="editItem(' + i.id + ')">' +
+      '<td style="font-size:13px;padding:10px 12px;border-bottom:0.5px solid var(--border);">' + i.name + '</td>' +
+      '<td style="font-size:12px;color:var(--muted);padding:10px 12px;border-bottom:0.5px solid var(--border);">' + i.hi + '</td>' +
+      '<td style="font-size:12px;color:var(--muted);padding:10px 12px;border-bottom:0.5px solid var(--border);">' + i.cat + '</td>' +
+      '<td style="padding:10px 12px;border-bottom:0.5px solid var(--border);">' + i.unit + '</td>' +
+      '<td style="padding:10px 12px;border-bottom:0.5px solid var(--border);">₹' + i.price + '</td>' +
+      '<td style="padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--muted);">₹' + i.cost + '</td>' +
+      '<td style="padding:10px 12px;border-bottom:0.5px solid var(--border);">' + i.stock + '</td>' +
+      '<td style="padding:10px 12px;border-bottom:0.5px solid var(--border);"><span class="sbadge ' + s + '">' + sl + '</span></td></tr>';
+  }).join('');
+  renderAlerts();
+}
+function filterInv(v) { initInventory(v); }
+
+function renderAlerts() {
+  const low = ITEMS.filter(i => i.stock === 0 || i.stock <= 5).sort((a, b) => a.stock - b.stock);
+  const el = document.getElementById('alert-list');
+  if (low.length === 0) { el.innerHTML = '<div style="color:var(--hint);text-align:center;padding:20px;">No alerts — stock levels are good</div>'; return; }
+  el.innerHTML = low.map(i => '<div class="khata-card" style="' + (i.stock === 0 ? 'border-color:#E24B4A;' : 'border-color:#EF9F27;') + '">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+    '<div><div style="font-size:14px;font-weight:500;">' + i.name + ' <span style="font-size:12px;color:var(--muted);">' + i.hi + '</span></div>' +
+    '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + i.cat + ' · ₹' + i.price + '/' + i.unit + '</div></div>' +
+    '<span class="sbadge ' + (i.stock === 0 ? 'sout' : 'slow') + '">' + (i.stock === 0 ? 'Out of stock' : 'Only ' + i.stock + ' left') + '</span>' +
+    '</div></div>').join('');
+}
+
+// ===== ITEM CRUD =====
+function showAddItemForm() {
+  editingItemId = null;
+  document.getElementById('item-modal-title').textContent = 'Add item';
+  ['item-name', 'item-hi', 'item-price', 'item-cost', 'item-stock'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('item-cat').value = 'Plumbing';
+  document.getElementById('item-unit').value = 'pc';
+  document.getElementById('item-overlay').classList.add('on');
+}
+
+function editItem(id) {
+  const item = ITEMS.find(i => i.id === id);
+  if (!item) return;
+  editingItemId = id;
+  document.getElementById('item-modal-title').textContent = 'Edit item — ' + item.name;
+  document.getElementById('item-name').value = item.name;
+  document.getElementById('item-hi').value = item.hi;
+  document.getElementById('item-cat').value = item.cat;
+  document.getElementById('item-unit').value = item.unit;
+  document.getElementById('item-price').value = item.price;
+  document.getElementById('item-cost').value = item.cost;
+  document.getElementById('item-stock').value = item.stock;
+  document.getElementById('item-overlay').classList.add('on');
+}
+
+function saveItem() {
+  const name = document.getElementById('item-name').value.trim();
+  const hi = document.getElementById('item-hi').value.trim();
+  const cat = document.getElementById('item-cat').value;
+  const unit = document.getElementById('item-unit').value;
+  const price = +document.getElementById('item-price').value;
+  const cost = +document.getElementById('item-cost').value;
+  const stock = +document.getElementById('item-stock').value;
+  if (!name || !price) { showToast('Name and price are required'); return; }
+  if (editingItemId) {
+    const item = ITEMS.find(i => i.id === editingItemId);
+    if (item) { Object.assign(item, { name, hi, cat, unit, price, cost, stock }); }
+    showToast('Item updated');
+  } else {
+    const newId = Math.max(0, ...ITEMS.map(i => i.id)) + 1;
+    ITEMS.push({ id: newId, name, hi, cat, unit, price, cost, stock });
+    showToast('Item added');
+  }
+  DB.save('items', ITEMS);
+  closeOverlay('item-overlay');
+  initInventory();
+  initItems();
+}
+
+// ===== KHATA =====
+function initKhata() {
+  const el = document.getElementById('khata-list');
+  el.innerHTML = CONTRACTORS.map(c => {
+    const pct = c.limit > 0 ? Math.round(c.balance / c.limit * 100) : 0;
+    const barColor = c.overdue ? '#A32D2D' : pct > 80 ? '#854F0B' : '#185FA5';
+    return '<div class="khata-card ' + (c.overdue ? 'overdue' : '') + '">' +
+      '<div class="khata-head">' +
+      '<div class="av" style="background:' + (c.overdue ? 'var(--red-light)' : 'var(--blue-light)') + ';color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">' + c.name.split(' ').map(w => w[0]).join('').slice(0, 2) + '</div>' +
+      '<div style="flex:1">' +
+      '<div style="font-size:14px;font-weight:500;">' + c.name + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);">' + c.hi + ' · Last paid: ' + c.lastPaid + '</div></div>' +
+      (c.overdue ? '<span class="flag flag-high">Overdue</span>' : '') +
+      '</div>' +
+      '<div style="margin-bottom:8px;">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;"><span>बाकी (Outstanding)</span><span>₹' + c.balance.toLocaleString('en-IN') + ' / ₹' + c.limit.toLocaleString('en-IN') + '</span></div>' +
+      '<div style="height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;"><div style="height:6px;width:' + pct + '%;background:' + barColor + ';border-radius:3px;"></div></div>' +
+      '</div>' +
+      '<div class="khata-stats">' +
+      '<div class="ks"><div class="ks-v" style="color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">₹' + c.balance.toLocaleString('en-IN') + '</div><div class="ks-l">उधार बाकी</div></div>' +
+      '<div class="ks"><div class="ks-v">₹' + c.limit.toLocaleString('en-IN') + '</div><div class="ks-l">Credit limit</div></div>' +
+      '<div class="ks"><div class="ks-v">' + pct + '%</div><div class="ks-l">Utilised</div></div>' +
+      '<div class="ks"><div class="ks-v" style="color:var(--muted);">' + c.lastPaid + '</div><div class="ks-l">Last payment</div></div>' +
+      '</div>' +
+      '<div style="display:flex;gap:7px;margin-top:10px;">' +
+      '<button class="btn-s" style="flex:1;font-size:12px;" onclick="showPaymentForm(\'' + c.name.replace(/'/g, "\\'") + '\')">💰 Record payment</button>' +
+      '<button class="btn-s" style="flex:1;font-size:12px;" onclick="showContractorLedger(\'' + c.name.replace(/'/g, "\\'") + '\')">📋 Ledger</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+function showPaymentForm(name) {
+  document.getElementById('pay-contractor-name').textContent = name;
+  document.getElementById('pay-amount').value = '';
+  document.getElementById('pay-mode').value = 'cash';
+  document.getElementById('pay-ref').value = '';
+  document.getElementById('payment-overlay').classList.add('on');
+}
+
+function recordPayment() {
+  const name = document.getElementById('pay-contractor-name').textContent;
+  const amount = +document.getElementById('pay-amount').value;
+  const mode = document.getElementById('pay-mode').value;
+  const ref = document.getElementById('pay-ref').value.trim();
+  if (!amount || amount <= 0) { showToast('Enter a valid amount'); return; }
+  const contractor = CONTRACTORS.find(c => c.name === name);
+  if (!contractor) { showToast('Contractor not found'); return; }
+  contractor.balance = Math.max(0, contractor.balance - amount);
+  contractor.lastPaid = 'Today';
+  contractor.overdue = false;
+  DB.save('contractors', CONTRACTORS);
+  payments.push({ contractorName: name, amount, mode, ref, date: new Date().toISOString() });
+  DB.save('payments', payments);
+  closeOverlay('payment-overlay');
+  renderAll();
+  showToast('Payment of ₹' + amount + ' recorded for ' + name);
+}
+
+function showContractorLedger(name) {
+  const contractor = CONTRACTORS.find(c => c.name === name);
+  if (!contractor) return;
+  const relatedTxns = transactions.filter(t => t.customer === name || t.contractorName === name);
+  const relatedPayments = payments.filter(p => p.contractorName === name);
+  let rows = [];
+  relatedTxns.forEach(t => rows.push({
+    date: new Date(t.createdAt),
+    desc: 'Bill #' + t.id + ' — ' + (t.items ? t.items.map(i => i.name + '×' + i.qty).join(', ') : ''),
+    debit: t.tot,
+    credit: 0
+  }));
+  relatedPayments.forEach(p => rows.push({
+    date: new Date(p.date),
+    desc: 'Payment (' + p.mode + (p.ref ? ' — ' + p.ref : '') + ')',
+    debit: 0,
+    credit: p.amount
+  }));
+  rows.sort((a, b) => a.date - b.date);
+  let bal = 0;
+  const lines = rows.map(r => {
+    bal += r.debit - r.credit;
+    return '<div class="rrow"><span style="font-size:10px;">' + r.date.toLocaleDateString('en-IN') + '</span><span style="flex:1;font-size:11px;padding:0 6px;">' + r.desc + '</span>' +
+      '<span style="color:#A32D2D;font-size:11px;width:50px;text-align:right;">' + (r.debit ? '₹' + r.debit : '') + '</span>' +
+      '<span style="color:#3B6D11;font-size:11px;width:50px;text-align:right;">' + (r.credit ? '₹' + r.credit : '') + '</span>' +
+      '<span style="font-weight:500;font-size:11px;width:55px;text-align:right;">₹' + bal + '</span></div>';
+  }).join('');
+  const html = '<div class="rcpt-logo"><b>' + name + '</b><small>' + contractor.hi + ' — Full ledger</small></div><hr class="rdiv">' +
+    '<div class="rrow" style="font-size:10px;color:var(--muted);"><span>Date</span><span style="flex:1;">Description</span><span style="width:50px;text-align:right;">Bill</span><span style="width:50px;text-align:right;">Paid</span><span style="width:55px;text-align:right;">Balance</span></div>' +
+    (lines || '<div style="text-align:center;color:var(--hint);padding:10px;">No transactions</div>') +
+    '<div style="display:flex;gap:7px;margin-top:12px;"><button class="rbtn-close" onclick="closeOverlay(\'overlay\')">Close</button></div>';
+  document.getElementById('rcpt-content').innerHTML = html;
+  document.getElementById('overlay').classList.add('on');
+}
+
+function initOwnerContractors() {
+  const el = document.getElementById('owner-contractor-cards');
+  const sorted = [...CONTRACTORS].sort((a, b) => b.balance - a.balance).slice(0, 4);
+  el.innerHTML = sorted.map(c => '<div class="card">' +
+    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+    '<div class="av" style="background:' + (c.overdue ? 'var(--red-light)' : 'var(--blue-light)') + ';color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">' + c.name.split(' ').map(w => w[0]).join('').slice(0, 2) + '</div>' +
+    '<div><div style="font-size:13px;font-weight:500;">' + c.name + '</div><div style="font-size:11px;color:var(--muted);">' + c.hi + '</div></div>' +
+    (c.overdue ? '<span class="flag flag-high" style="margin-left:auto;">Overdue</span>' : '') +
+    '</div>' +
+    '<div style="font-size:20px;font-weight:500;color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">₹' + c.balance.toLocaleString('en-IN') + '</div>' +
+    '<div style="font-size:11px;color:var(--muted);margin-top:2px;">Last paid: ' + c.lastPaid + '</div></div>').join('');
+}
+
+function filterKhataSearch(f) {
+  const el = document.getElementById('khata-search-results');
+  if (!f) { el.innerHTML = ''; return; }
+  const res = CONTRACTORS.filter(c => c.name.toLowerCase().includes(f.toLowerCase()) || c.hi.includes(f));
+  if (res.length === 0) { el.innerHTML = '<div style="color:var(--hint);font-size:13px;">No contractor found</div>'; return; }
+  el.innerHTML = res.map(c => '<div class="khata-card">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+    '<div><div style="font-size:14px;font-weight:500;">' + c.name + '</div><div style="font-size:12px;color:var(--muted);">' + c.hi + '</div></div>' +
+    '<div style="text-align:right;">' +
+    '<div style="font-size:18px;font-weight:500;color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">₹' + c.balance.toLocaleString('en-IN') + '</div>' +
+    '<div style="font-size:11px;color:var(--muted);">of ₹' + c.limit.toLocaleString('en-IN') + ' limit</div>' +
+    (c.overdue ? '<span class="flag flag-high" style="margin-top:4px;display:inline-block;">Overdue — do not extend more credit</span>' : '<span class="flag flag-ok" style="margin-top:4px;display:inline-block;">OK to extend credit</span>') +
+    '</div></div></div>').join('');
+}
+
+// ===== NAVIGATION =====
+function setRole(r, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('on'));
+  document.getElementById('view-' + r).classList.add('on');
+  btn.classList.add('on');
+}
+
+function showSub(role, tab, btn) {
+  document.querySelectorAll('#view-' + role + ' .subtab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('#view-' + role + ' .snav').forEach(b => b.classList.remove('on'));
+  document.getElementById(role + '-' + tab).classList.add('on');
+  btn.classList.add('on');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(function () { t.classList.remove('on'); }, 2500);
+}
+
+// ===== START =====
+initApp();
+</script>
+</body>
+</html>
