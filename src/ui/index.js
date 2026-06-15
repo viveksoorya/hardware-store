@@ -1,6 +1,6 @@
 import {
   getItems, getContractors, getKhataCustomers, getTransactions, getDiscountLog,
-  getExpenses, getBillCount, getOpeningFloat,
+  getExpenses, getBillCount, getPayments,
   getCart, getPayMode, getTodayTotals, getTodayExpenses,
   setCart, setPayMode, setOpeningFloat, applyStateUpdate, getStateSnapshot,
 } from '../state.js'
@@ -352,11 +352,11 @@ export function populateContractorSelect() {
 export function filterKhataSearch(f) {
   const el = document.getElementById('khata-search-results')
   if (!el) return
-  if (!f) { el.innerHTML = ''; return }
+  const q = (f || '').toLowerCase()
   const all = [
     ...getContractors().map(c => ({ ...c, _type: 'contractor' })),
     ...getKhataCustomers().map(c => ({ ...c, hi: '', limit: 0, overdue: false, _type: 'customer' })),
-  ].filter(c => c.name.toLowerCase().includes(f.toLowerCase()) || c.hi.includes(f))
+  ].filter(c => !q || c.name.toLowerCase().includes(q) || c.hi.includes(q))
   if (all.length === 0) {
     el.innerHTML = '<div style="color:var(--hint);font-size:13px;">No match found</div>'
     return
@@ -633,6 +633,7 @@ window.showSub = function (role, tab, btn) {
   const tabEl = document.getElementById(role + '-' + tab)
   if (tabEl) tabEl.classList.add('on')
   if (btn) btn.classList.add('on')
+  if (role === 'counter' && tab === 'check-khata') filterKhataSearch('')
 }
 
 // ── Toast ──
