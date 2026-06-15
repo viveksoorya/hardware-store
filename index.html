@@ -158,6 +158,11 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1208;color:#fff;padding:10px 22px;border-radius:var(--border-radius-md);font-size:14px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;}
 .toast.on{opacity:1;}
+@media(max-width:700px){
+  .billing-layout{grid-template-columns:1fr;}
+  .item-grid{grid-template-columns:repeat(2,1fr);max-height:240px;}
+  .khata-stats{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 </head>
 <body>
@@ -206,6 +211,20 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
 
   <div id="owner-khata" class="subtab pad">
     <p class="sh">Khata ledger — सभी उधार खाते (Contractors + Customers)</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+      <input type="text" class="inv-search" id="owner-khata-search" style="flex:1;min-width:180px;" placeholder="Search khata..." oninput="window.updateOwnerKhata()">
+      <select class="cinput" id="owner-khata-sort" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="window.updateOwnerKhata()">
+        <option value="balance-desc">Highest balance</option>
+        <option value="balance-asc">Lowest balance</option>
+        <option value="name">Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="last-paid-asc">Least recently paid</option>
+        <option value="last-paid-desc">Most recently paid</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;">
+        <input type="checkbox" id="owner-khata-overdue" onchange="window.updateOwnerKhata()"> Overdue only
+      </label>
+    </div>
     <div id="khata-list"></div>
   </div>
 
@@ -280,8 +299,8 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
       <div class="bill-panel">
         <div class="bp-head"><span style="font-size:15px;font-weight:500;">Bill / बिल</span><span id="bc-count" style="font-size:13px;color:var(--muted);">0 items</span></div>
         <div class="bp-body">
-          <input type="text" class="cinput" id="bc-cust" placeholder="Customer / ग्राहक का नाम">
-          <input type="text" class="cinput" id="bc-phone" placeholder="Phone (WhatsApp)">
+          <input type="text" class="cinput" id="bc-cust" placeholder="Customer / ग्राहक का नाम" list="customer-suggestions">
+          <input type="text" class="cinput" id="bc-phone" placeholder="Phone (WhatsApp)" list="phone-suggestions">
           <div class="pay-toggle">
             <button class="ptog cash-on" id="ptog-cash" onclick="setPayMode('cash')">💵 Cash</button>
             <button class="ptog" id="ptog-upi" onclick="setPayMode('upi')">📱 UPI</button>
@@ -314,7 +333,20 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
 
   <div id="counter-check-khata" class="subtab pad">
     <p class="sh">Check contractor + customer khata balance</p>
-    <input type="text" class="inv-search" style="max-width:360px;margin-bottom:14px;" placeholder="Search contractor or customer..." oninput="filterKhataSearch(this.value)">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+      <input type="text" class="inv-search" id="counter-khata-search" style="flex:1;min-width:180px;" placeholder="Search contractor or customer..." oninput="window.updateCounterKhata()">
+      <select class="cinput" id="counter-khata-sort" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="window.updateCounterKhata()">
+        <option value="balance-desc">Highest balance</option>
+        <option value="balance-asc">Lowest balance</option>
+        <option value="name">Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="last-paid-asc">Least recently paid</option>
+        <option value="last-paid-desc">Most recently paid</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;">
+        <input type="checkbox" id="counter-khata-overdue" onchange="window.updateCounterKhata()"> Overdue only
+      </label>
+    </div>
     <div id="khata-search-results"></div>
   </div>
 </div>
@@ -327,7 +359,25 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
   </div>
   <div id="stock-inv" class="subtab on pad">
     <div class="inv-toolbar">
-      <input type="text" class="inv-search" placeholder="Search item..." oninput="filterInv(this.value)">
+      <input type="text" class="inv-search" id="inv-search" placeholder="Search item..." oninput="filterInv(this.value)">
+      <select class="cinput" id="inv-cat" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="filterInv(document.getElementById('inv-search').value)">
+        <option value="">All categories</option>
+        <option value="Plumbing">Plumbing</option>
+        <option value="Electrical">Electrical</option>
+        <option value="Construction">Construction</option>
+        <option value="Paint">Paint</option>
+        <option value="Tools">Tools</option>
+        <option value="Fasteners">Fasteners</option>
+      </select>
+      <select class="cinput" id="inv-sort" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="filterInv(document.getElementById('inv-search').value)">
+        <option value="name-asc">Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="stock-asc">Stock (low first)</option>
+        <option value="stock-desc">Stock (high first)</option>
+        <option value="price-asc">Price (low first)</option>
+        <option value="price-desc">Price (high first)</option>
+        <option value="cat">Category</option>
+      </select>
       <button class="btn-add" onclick="showAddItemForm()">+ Add item</button>
     </div>
     <div class="card" style="overflow-x:auto;">
@@ -392,6 +442,8 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
   </div>
 </div>
 
+<datalist id="customer-suggestions"></datalist>
+<datalist id="phone-suggestions"></datalist>
 <div class="toast" id="toast"></div>
 </div>
 </body>

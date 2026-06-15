@@ -111,6 +111,7 @@ export function applyBill(state, billData, payMode) {
   const transaction = {
     id: newBillCount,
     customer: billData.name,
+    phone: billData.phone,
     payMode,
     tot: billData.tot,
     disc: billData.disc,

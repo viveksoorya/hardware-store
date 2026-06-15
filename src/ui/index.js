@@ -27,8 +27,8 @@ let editingItemId = null
 export function renderAll() {
   renderOwnerDash()
   renderItemGrid()
-  renderInventory()
-  renderKhata()
+  renderInventory(document.querySelector('.inv-search')?.value, document.getElementById('inv-sort')?.value, document.getElementById('inv-cat')?.value)
+  window.updateOwnerKhata()
   renderOwnerContractors()
   renderExpenses()
   populateContractorSelect()
@@ -215,11 +215,27 @@ export function renderExpenses() {
 
 // ── Inventory ──
 
-export function renderInventory(f) {
+export function renderInventory(f, sortBy, catFilter) {
   const q = (f || '').toLowerCase()
   const body = document.getElementById('inv-body')
   if (!body) return
-  const fl = filterItems(getItems(), q)
+  let fl = filterItems(getItems(), q)
+  if (catFilter) {
+    fl = fl.filter(i => i.cat === catFilter)
+  }
+  sortBy = sortBy || 'name-asc'
+  fl.sort((a, b) => {
+    switch (sortBy) {
+      case 'name-desc': return b.name.localeCompare(a.name)
+      case 'stock-asc': return a.stock - b.stock
+      case 'stock-desc': return b.stock - a.stock
+      case 'price-asc': return a.price - b.price
+      case 'price-desc': return b.price - a.price
+      case 'cat': return a.cat.localeCompare(b.cat)
+      case 'name-asc':
+      default: return a.name.localeCompare(b.name)
+    }
+  })
   body.innerHTML = fl.map(i => {
     const s = i.stock === 0 ? 'sout' : i.stock <= 5 ? 'slow' : 'sok'
     const sl = i.stock === 0 ? 'Out of stock' : i.stock <= 5 ? 'Low stock' : 'In stock'
@@ -236,7 +252,9 @@ export function renderInventory(f) {
   renderAlerts()
 }
 
-export function filterInv(v) { renderInventory(v) }
+export function filterInv(v) {
+  renderInventory(v, document.getElementById('inv-sort')?.value, document.getElementById('inv-cat')?.value)
+}
 window.filterInv = filterInv
 
 export function renderAlerts() {
@@ -260,40 +278,78 @@ export function renderAlerts() {
 
 // ── Khata ──
 
-export function renderKhata() {
+function daysSinceLastPaid(str) {
+  if (!str) return 9999
+  const s = str.toLowerCase().trim()
+  if (s === 'today') return 0
+  if (s === 'yesterday') return 1
+  const m = s.match(/^(\d+)\s+day/i)
+  if (m) return +m[1]
+  return 9999
+}
+
+export function renderKhata(filterText, sortBy, overdueOnly) {
   const el = document.getElementById('khata-list')
   if (!el) return
-  const html = []
-  getContractors().forEach(c => {
-    const pct = c.limit > 0 ? Math.round(c.balance / c.limit * 100) : 0
-    const barColor = c.overdue ? '#A32D2D' : pct > 80 ? '#854F0B' : '#185FA5'
-    const nameEscaped = c.name.replace(/'/g, "\\'")
-    html.push('<div class="khata-card ' + (c.overdue ? 'overdue' : '') + '">' +
-      '<div class="khata-head">' +
-      '<div class="av" style="background:' + (c.overdue ? 'var(--red-light)' : 'var(--blue-light)') + ';color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">' + c.name.split(' ').map(w => w[0]).join('').slice(0, 2) + '</div>' +
-      '<div style="flex:1">' +
-      '<div style="font-size:14px;font-weight:500;">' + c.name + '</div>' +
-      '<div style="font-size:12px;color:var(--muted);">' + c.hi + ' · Last paid: ' + c.lastPaid + '</div></div>' +
-      (c.overdue ? '<span class="flag flag-high">Overdue</span>' : '') +
-      '</div>' +
-      '<div style="margin-bottom:8px;">' +
-      '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;"><span>बाकी (Outstanding)</span><span>₹' + c.balance.toLocaleString('en-IN') + ' / ₹' + c.limit.toLocaleString('en-IN') + '</span></div>' +
-      '<div style="height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;"><div style="height:6px;width:' + pct + '%;background:' + barColor + ';border-radius:3px;"></div></div>' +
-      '</div>' +
-      '<div class="khata-stats">' +
-      '<div class="ks"><div class="ks-v" style="color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">₹' + c.balance.toLocaleString('en-IN') + '</div><div class="ks-l">उधार बाकी</div></div>' +
-      '<div class="ks"><div class="ks-v">₹' + c.limit.toLocaleString('en-IN') + '</div><div class="ks-l">Credit limit</div></div>' +
-      '<div class="ks"><div class="ks-v">' + pct + '%</div><div class="ks-l">Utilised</div></div>' +
-      '<div class="ks"><div class="ks-v" style="color:var(--muted);">' + c.lastPaid + '</div><div class="ks-l">Last payment</div></div>' +
-      '</div>' +
-      '<div style="display:flex;gap:7px;margin-top:10px;">' +
-      '<button class="btn-s" style="flex:1;font-size:12px;" onclick="window.showPaymentForm(\'' + nameEscaped + '\')">💰 Record payment</button>' +
-      '<button class="btn-s" style="flex:1;font-size:12px;" onclick="window.showContractorLedger(\'' + nameEscaped + '\')">📋 Ledger</button>' +
-      '</div></div>')
+  const q = (filterText || '').toLowerCase()
+  sortBy = sortBy || 'balance-desc'
+
+  let all = [
+    ...getContractors().map(c => ({ ...c, _type: 'contractor' })),
+    ...getKhataCustomers().map(c => ({ ...c, hi: '', limit: 0, overdue: false, _type: 'customer' })),
+  ]
+
+  if (q) {
+    all = all.filter(c => c.name.toLowerCase().includes(q) || c.hi.includes(q))
+  }
+
+  if (overdueOnly) {
+    all = all.filter(c => c._type === 'contractor' ? c.overdue : false)
+  }
+
+  all.sort((a, b) => {
+    const aDays = daysSinceLastPaid(a.lastPaid)
+    const bDays = daysSinceLastPaid(b.lastPaid)
+    switch (sortBy) {
+      case 'balance-asc': return a.balance - b.balance
+      case 'name': return a.name.localeCompare(b.name)
+      case 'name-desc': return b.name.localeCompare(a.name)
+      case 'last-paid-asc': return bDays - aDays
+      case 'last-paid-desc': return aDays - bDays
+      case 'balance-desc':
+      default: return b.balance - a.balance
+    }
   })
-  getKhataCustomers().forEach(c => {
+
+  const html = all.map(c => {
     const nameEscaped = c.name.replace(/'/g, "\\'")
-    html.push('<div class="khata-card">' +
+    if (c._type === 'contractor') {
+      const pct = c.limit > 0 ? Math.min(100, Math.round(c.balance / c.limit * 100)) : 0
+      const barColor = c.overdue ? '#A32D2D' : pct > 80 ? '#854F0B' : '#185FA5'
+      return '<div class="khata-card ' + (c.overdue ? 'overdue' : '') + '">' +
+        '<div class="khata-head">' +
+        '<div class="av" style="background:' + (c.overdue ? 'var(--red-light)' : 'var(--blue-light)') + ';color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">' + c.name.split(' ').map(w => w[0]).join('').slice(0, 2) + '</div>' +
+        '<div style="flex:1">' +
+        '<div style="font-size:14px;font-weight:500;">' + c.name + '</div>' +
+        '<div style="font-size:12px;color:var(--muted);">' + c.hi + ' · Last paid: ' + c.lastPaid + '</div></div>' +
+        (c.overdue ? '<span class="flag flag-high">Overdue</span>' : '') +
+        '</div>' +
+        '<div style="margin-bottom:8px;">' +
+        '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;"><span>बाकी (Outstanding)</span><span>₹' + c.balance.toLocaleString('en-IN') + ' / ₹' + c.limit.toLocaleString('en-IN') + '</span></div>' +
+        '<div style="height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;"><div style="height:6px;width:' + pct + '%;background:' + barColor + ';border-radius:3px;"></div></div>' +
+        '</div>' +
+        '<div class="khata-stats">' +
+        '<div class="ks"><div class="ks-v" style="color:' + (c.overdue ? 'var(--red)' : 'var(--blue)') + ';">₹' + c.balance.toLocaleString('en-IN') + '</div><div class="ks-l">उधार बाकी</div></div>' +
+        '<div class="ks"><div class="ks-v">₹' + c.limit.toLocaleString('en-IN') + '</div><div class="ks-l">Credit limit</div></div>' +
+        '<div class="ks"><div class="ks-v">' + pct + '%</div><div class="ks-l">Utilised</div></div>' +
+        '<div class="ks"><div class="ks-v" style="color:var(--muted);">' + c.lastPaid + '</div><div class="ks-l">Last payment</div></div>' +
+        '</div>' +
+        '<div style="display:flex;gap:7px;margin-top:10px;">' +
+        '<button class="btn-s" style="flex:1;font-size:12px;" onclick="window.showPaymentForm(\'' + nameEscaped + '\')">💰 Record payment</button>' +
+        '<button class="btn-s" style="flex:1;font-size:12px;" onclick="window.showContractorLedger(\'' + nameEscaped + '\')">📋 Ledger</button>' +
+        '</div></div>'
+    }
+    return '<div class="khata-card">' +
       '<div class="khata-head">' +
       '<div class="av" style="background:var(--green-light);color:var(--green);">' + c.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() + '</div>' +
       '<div style="flex:1">' +
@@ -310,12 +366,20 @@ export function renderKhata() {
       '<div style="display:flex;gap:7px;margin-top:10px;">' +
       '<button class="btn-s" style="flex:1;font-size:12px;" onclick="window.showPaymentForm(\'' + nameEscaped + '\')">💰 Record payment</button>' +
       '<button class="btn-s" style="flex:1;font-size:12px;" onclick="window.showContractorLedger(\'' + nameEscaped + '\')">📋 Ledger</button>' +
-      '</div></div>')
+      '</div></div>'
   })
   if (html.length === 0) {
     html.push('<div style="color:var(--hint);font-size:13px;text-align:center;padding:20px;">No khata entries yet</div>')
   }
   el.innerHTML = html.join('')
+}
+
+window.updateOwnerKhata = function () {
+  renderKhata(
+    document.getElementById('owner-khata-search')?.value,
+    document.getElementById('owner-khata-sort')?.value,
+    document.getElementById('owner-khata-overdue')?.checked
+  )
 }
 
 export function renderOwnerContractors() {
@@ -347,16 +411,56 @@ export function populateContractorSelect() {
     '<option value="' + c.name.replace(/"/g, '&quot;') + '">' + c.name + ' (Customer)</option>'
   ).join('')
   sel.innerHTML = '<option value="">Select contractor / ठेकेदार चुनें</option>' + contractors + customers
+
+  const nameDL = document.getElementById('customer-suggestions')
+  if (nameDL) {
+    const seen = new Set()
+    const names = [...getContractors().map(c => c.name), ...getKhataCustomers().map(c => c.name)]
+    nameDL.innerHTML = names.filter(n => { if (seen.has(n)) return false; seen.add(n); return true }).map(n =>
+      '<option value="' + n.replace(/"/g, '&quot;') + '">' + n + '</option>'
+    ).join('') + getTransactions().filter(t => t.customer && !seen.has(t.customer)).map(t => {
+      seen.add(t.customer); return '<option value="' + t.customer.replace(/"/g, '&quot;') + '">' + t.customer + '</option>'
+    }).join('')
+  }
+
+  const phoneDL = document.getElementById('phone-suggestions')
+  if (phoneDL) {
+    const seen = new Set()
+    phoneDL.innerHTML = getTransactions().filter(t => t.phone).map(t => {
+      if (seen.has(t.phone)) return ''; seen.add(t.phone)
+      return '<option value="' + t.phone + '">' + t.customer + ' — ' + t.phone + '</option>'
+    }).join('')
+  }
 }
 
-export function filterKhataSearch(f) {
+export function filterKhataSearch(f, sortBy, overdueOnly) {
   const el = document.getElementById('khata-search-results')
   if (!el) return
   const q = (f || '').toLowerCase()
-  const all = [
+  sortBy = sortBy || 'balance-desc'
+  let all = [
     ...getContractors().map(c => ({ ...c, _type: 'contractor' })),
     ...getKhataCustomers().map(c => ({ ...c, hi: '', limit: 0, overdue: false, _type: 'customer' })),
-  ].filter(c => !q || c.name.toLowerCase().includes(q) || c.hi.includes(q))
+  ]
+  if (q) {
+    all = all.filter(c => c.name.toLowerCase().includes(q) || c.hi.includes(q))
+  }
+  if (overdueOnly) {
+    all = all.filter(c => c._type === 'contractor' ? c.overdue : false)
+  }
+  all.sort((a, b) => {
+    const aDays = daysSinceLastPaid(a.lastPaid)
+    const bDays = daysSinceLastPaid(b.lastPaid)
+    switch (sortBy) {
+      case 'balance-asc': return a.balance - b.balance
+      case 'name': return a.name.localeCompare(b.name)
+      case 'name-desc': return b.name.localeCompare(a.name)
+      case 'last-paid-asc': return bDays - aDays
+      case 'last-paid-desc': return aDays - bDays
+      case 'balance-desc':
+      default: return b.balance - a.balance
+    }
+  })
   if (all.length === 0) {
     el.innerHTML = '<div style="color:var(--hint);font-size:13px;">No match found</div>'
     return
@@ -372,11 +476,21 @@ export function filterKhataSearch(f) {
   ).join('')
 }
 
+window.updateCounterKhata = function () {
+  filterKhataSearch(
+    document.getElementById('counter-khata-search')?.value,
+    document.getElementById('counter-khata-sort')?.value,
+    document.getElementById('counter-khata-overdue')?.checked
+  )
+}
+
 
 // ── Window-exposed helpers (for HTML onclick/oninput) ──
 
 window.renderBill = renderBill
 window.filterKhataSearch = filterKhataSearch
+window.updateOwnerKhata = window.updateOwnerKhata
+window.updateCounterKhata = window.updateCounterKhata
 
 // ══════════════════════════════════════════
 //  EVENT HANDLERS
@@ -625,6 +739,8 @@ window.setRole = function (r, btn) {
   const view = document.getElementById('view-' + r)
   if (view) view.classList.add('on')
   if (btn) btn.classList.add('on')
+  const tabs = { owner: 'dash', counter: 'bill', stock: 'inv' }
+  window.showSub(r, tabs[r] || 'dash', document.querySelector('#view-' + r + ' .snav'))
 }
 
 window.showSub = function (role, tab, btn) {
@@ -633,7 +749,10 @@ window.showSub = function (role, tab, btn) {
   const tabEl = document.getElementById(role + '-' + tab)
   if (tabEl) tabEl.classList.add('on')
   if (btn) btn.classList.add('on')
-  if (role === 'counter' && tab === 'check-khata') filterKhataSearch('')
+  if (role === 'counter' && tab === 'bill') { renderItemGrid(document.querySelector('.item-search')?.value); renderBill(); populateContractorSelect() }
+  if (role === 'counter' && tab === 'check-khata') window.updateCounterKhata()
+  if (role === 'owner' && tab === 'khata') window.updateOwnerKhata()
+  if (role === 'stock' && tab === 'inv') renderInventory(document.getElementById('inv-search')?.value, document.getElementById('inv-sort')?.value, document.getElementById('inv-cat')?.value)
 }
 
 // ── Toast ──
