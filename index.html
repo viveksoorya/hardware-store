@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sharma Hardware & Electricals</title>
+<title>Loading...</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <script type="module" src="/src/main.js"></script>
 <script nomodule>document.body.innerHTML='<div style="padding:40px;text-align:center;font-family:sans-serif;"><h2>Please run <code style="background:#eee;padding:4px 8px;border-radius:4px;">npm run dev</code></h2><p style="color:#666;margin-top:12px;">This app uses ES modules and must be served via HTTP. Open a terminal in the project folder and run <code style="background:#eee;padding:2px 6px;border-radius:3px;">npm run dev</code>, then visit <strong>http://localhost:5173/</strong></p></div>'</script>
@@ -170,10 +170,10 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
 <div>
 <div class="header">
   <div class="brand">
-    <div class="brand-icon"><i class="ti ti-tools" aria-hidden="true" style="font-size:18px;color:#fff;"></i></div>
+    <div class="brand-icon"><i class="ti" aria-hidden="true" style="font-size:18px;color:#fff;"></i></div>
     <div>
-      <div class="brand-name">Sharma Hardware & Electricals</div>
-      <div class="brand-sub">Secunderabad, Hyderabad</div>
+      <div class="brand-name">Loading...</div>
+      <div class="brand-sub"></div>
     </div>
   </div>
   <div class="role-tabs">
@@ -189,6 +189,7 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
     <button class="snav on" onclick="showSub('owner','dash',this)">Dashboard</button>
     <button class="snav" onclick="showSub('owner','khata',this)">Khata / उधार</button>
     <button class="snav" onclick="showSub('owner','discounts',this)">Discount log</button>
+    <button class="snav" onclick="showSub('owner','all-bills',this)">All bills</button>
     <button class="snav" onclick="showSub('owner','eod',this)">End of day</button>
   </div>
 
@@ -278,6 +279,27 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
       <div id="eod-msg" style="font-size:13px;text-align:center;margin-top:10px;color:var(--muted);"></div>
     </div>
   </div>
+
+  <div id="owner-all-bills" class="subtab pad">
+    <p class="sh">All transactions — सभी बिल</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;">
+      <input type="text" id="all-bills-search" class="inv-search" style="flex:1;min-width:160px;" placeholder="Search customer..." oninput="window.renderAllTxnLog()">
+      <input type="date" id="all-bills-from" class="cinput" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="window.renderAllTxnLog()">
+      <input type="date" id="all-bills-to" class="cinput" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="window.renderAllTxnLog()">
+      <select id="all-bills-sort" class="cinput" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="window.renderAllTxnLog()">
+        <option value="date-desc">Newest first</option>
+        <option value="date-asc">Oldest first</option>
+        <option value="amount-desc">Highest amount</option>
+        <option value="amount-asc">Lowest amount</option>
+      </select>
+    </div>
+    <div class="card" style="overflow-x:auto;">
+      <table class="inv-table">
+        <thead><tr><th>#</th><th>Customer</th><th>Phone</th><th>Payment</th><th>Disc</th><th>Amount</th><th>Date</th><th></th></tr></thead>
+        <tbody id="all-bills-body"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- ===== COUNTER VIEW ===== -->
@@ -362,12 +384,6 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
       <input type="text" class="inv-search" id="inv-search" placeholder="Search item..." oninput="filterInv(this.value)">
       <select class="cinput" id="inv-cat" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="filterInv(document.getElementById('inv-search').value)">
         <option value="">All categories</option>
-        <option value="Plumbing">Plumbing</option>
-        <option value="Electrical">Electrical</option>
-        <option value="Construction">Construction</option>
-        <option value="Paint">Paint</option>
-        <option value="Tools">Tools</option>
-        <option value="Fasteners">Fasteners</option>
       </select>
       <select class="cinput" id="inv-sort" style="flex:0 0 auto;width:auto;margin-bottom:0;" onchange="filterInv(document.getElementById('inv-search').value)">
         <option value="name-asc">Name (A-Z)</option>
@@ -422,16 +438,8 @@ body{font-family:var(--font-sans);color:var(--text);background:var(--bg);font-si
     <p style="font-size:16px;font-weight:500;margin-bottom:14px;" id="item-modal-title">Add item</p>
     <input type="text" class="cinput" id="item-name" placeholder="Item name">
     <input type="text" class="cinput" id="item-hi" placeholder="Hindi name">
-    <select class="cinput" id="item-cat">
-      <option value="Plumbing">Plumbing</option><option value="Electrical">Electrical</option>
-      <option value="Construction">Construction</option><option value="Paint">Paint</option>
-      <option value="Tools">Tools</option><option value="Fasteners">Fasteners</option>
-    </select>
-    <select class="cinput" id="item-unit">
-      <option value="pc">Piece</option><option value="ft">Feet</option><option value="mtr">Meter</option>
-      <option value="bag">Bag</option><option value="set">Set</option><option value="roll">Roll</option>
-      <option value="can">Can</option><option value="sheet">Sheet</option><option value="pack">Pack</option>
-    </select>
+    <select class="cinput" id="item-cat"></select>
+    <select class="cinput" id="item-unit"></select>
     <input type="number" class="cinput" id="item-price" placeholder="Selling price (₹)" step="0.01">
     <input type="number" class="cinput" id="item-cost" placeholder="Cost price (₹)" step="0.01">
     <input type="number" class="cinput" id="item-stock" placeholder="Stock qty">

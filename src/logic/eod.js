@@ -51,12 +51,4 @@ export function addExpense(expenses, cat, amount) {
   }
 }
 
-export const EXPENSE_CATEGORIES = {
-  loading: 'Loading coolie',
-  transport: 'Auto / Transport',
-  chai: 'Chai-Paani',
-  electricity: 'Electricity',
-  rent: 'Rent',
-  salary: 'Staff salary',
-  misc: 'Miscellaneous',
-}
+

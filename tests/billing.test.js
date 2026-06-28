@@ -268,7 +268,7 @@ describe('buildReceiptHTML', () => {
         items: [{ id: 1, name: 'Pipe', qty: 2, price: 85, cost: 60, unit: 'ft' }] },
       1, 'cash'
     )
-    expect(html).toContain('Sharma Hardware')
+    expect(html).toContain('Shop')
     expect(html).toContain('Amit')
     expect(html).toContain('Bill #1')
     expect(html).toContain('₹170')
@@ -293,7 +293,7 @@ describe('buildWAMsg', () => {
         items: [{ id: 1, name: 'Pipe', qty: 2, price: 85, cost: 60, unit: 'ft' }] },
       1, 'cash'
     )
-    expect(msg).toContain('Sharma Hardware')
+    expect(msg).toContain('Shop')
     expect(msg).toContain('Bill #1')
     expect(msg).toContain('Pipe × 2')
     expect(msg).toContain('Total: ₹170')

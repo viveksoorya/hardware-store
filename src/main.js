@@ -1,5 +1,8 @@
+import { getShopFromURL } from './shops.js'
 import { initState } from './state.js'
-import { renderAll } from './ui/index.js'
+import { renderAll, applyShopConfig } from './ui/index.js'
 
-initState()
+const config = getShopFromURL()
+initState(config)
+applyShopConfig(config)
 renderAll()

@@ -51,7 +51,3 @@ export function updateItem(items, id, data) {
 export function deleteItem(items, id) {
   return { items: items.filter(i => i.id !== id) }
 }
-
-export const CATEGORIES = ['Plumbing', 'Electrical', 'Construction', 'Paint', 'Tools', 'Fasteners']
-
-export const UNITS = ['pc', 'ft', 'mtr', 'bag', 'set', 'roll', 'can', 'sheet', 'pack']

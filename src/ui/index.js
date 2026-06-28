@@ -1,6 +1,6 @@
 import {
   getItems, getContractors, getKhataCustomers, getTransactions, getDiscountLog,
-  getExpenses, getBillCount, getPayments,
+  getExpenses, getBillCount, getPayments, getConfig,
   getCart, getPayMode, getTodayTotals, getTodayExpenses,
   setCart, setPayMode, setOpeningFloat, applyStateUpdate, getStateSnapshot,
 } from '../state.js'
@@ -14,17 +14,77 @@ import {
   recordPayment, getLedgerEntries,
 } from '../logic/khata.js'
 
-import { calcEOD, addExpense as addExpenseLogic, EXPENSE_CATEGORIES } from '../logic/eod.js'
+import { calcEOD, addExpense as addExpenseLogic } from '../logic/eod.js'
 
-import { filterItems, addItem as addItemLogic, updateItem, CATEGORIES, UNITS } from '../logic/item.js'
+import { filterItems, addItem as addItemLogic, updateItem } from '../logic/item.js'
 
 let editingItemId = null
+
+export function applyShopConfig(config) {
+  const root = document.documentElement
+  Object.entries(config.theme).forEach(([key, val]) => root.style.setProperty(key, val))
+
+  document.title = config.name
+
+  const brandName = document.querySelector('.brand-name')
+  const brandSub = document.querySelector('.brand-sub')
+  const brandIcon = document.querySelector('.brand-icon i')
+  if (brandName) brandName.textContent = config.name
+  if (brandSub) brandSub.textContent = config.tagline
+  if (brandIcon) {
+    brandIcon.className = 'ti ' + config.logo
+    brandIcon.setAttribute('aria-hidden', 'true')
+  }
+
+  root.setAttribute('lang', config.lang)
+
+  const expCatSel = document.getElementById('exp-cat')
+  if (expCatSel && config.expenseCategories) {
+    expCatSel.innerHTML = Object.entries(config.expenseCategories)
+      .map(([k, v]) => `<option value="${k}">${v}</option>`).join('')
+  }
+}
+
+function getConfigValue(key, fallback) {
+  const cfg = getConfig()
+  return cfg ? cfg[key] : fallback
+}
 
 // ══════════════════════════════════════════
 //  RENDER FUNCTIONS
 // ══════════════════════════════════════════
 
+export function populateSelectsFromConfig() {
+  const config = getConfig()
+  if (!config) return
+
+  const catSelectors = ['inv-cat', 'item-cat']
+  catSelectors.forEach(id => {
+    const el = document.getElementById(id)
+    if (!el) return
+    const currentVal = el.value
+    el.innerHTML = '<option value="">All categories</option>' +
+      config.categories.map(c => `<option value="${c}">${c}</option>`).join('')
+    if (currentVal && config.categories.includes(currentVal)) el.value = currentVal
+  })
+
+  const itemCat = document.getElementById('item-cat')
+  if (itemCat) {
+    itemCat.innerHTML = config.categories.map(c => `<option value="${c}">${c}</option>`).join('')
+  }
+
+  const unitSelectors = ['item-unit']
+  unitSelectors.forEach(id => {
+    const el = document.getElementById(id)
+    if (!el) return
+    const currentVal = el.value
+    el.innerHTML = config.units.map(u => `<option value="${u}">${u.charAt(0).toUpperCase() + u.slice(1)}</option>`).join('')
+    if (currentVal && config.units.includes(currentVal)) el.value = currentVal
+  })
+}
+
 export function renderAll() {
+  populateSelectsFromConfig()
   renderOwnerDash()
   renderItemGrid()
   renderInventory(document.querySelector('.inv-search')?.value, document.getElementById('inv-sort')?.value, document.getElementById('inv-cat')?.value)
@@ -174,6 +234,53 @@ export function renderDiscLog() {
       '</tr>'
   }).join('')
 }
+
+export function renderAllTxnLog() {
+  const body = document.getElementById('all-bills-body')
+  if (!body) return
+  const q = (document.getElementById('all-bills-search')?.value || '').toLowerCase()
+  const from = document.getElementById('all-bills-from')?.value
+  const to = document.getElementById('all-bills-to')?.value
+  const sortBy = document.getElementById('all-bills-sort')?.value || 'date-desc'
+
+  let txns = getTransactions().filter(t => !t.cancelled)
+
+  if (q) txns = txns.filter(t => t.customer.toLowerCase().includes(q))
+  if (from) txns = txns.filter(t => new Date(t.createdAt) >= new Date(from + 'T00:00:00'))
+  if (to) txns = txns.filter(t => new Date(t.createdAt) <= new Date(to + 'T23:59:59'))
+
+  txns.sort((a, b) => {
+    switch (sortBy) {
+      case 'date-asc': return new Date(a.createdAt) - new Date(b.createdAt)
+      case 'amount-desc': return b.tot - a.tot
+      case 'amount-asc': return a.tot - b.tot
+      case 'date-desc':
+      default: return new Date(b.createdAt) - new Date(a.createdAt)
+    }
+  })
+
+  if (txns.length === 0) {
+    body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--hint);padding:20px;">No bills found</td></tr>'
+    return
+  }
+
+  const payLabel = { cash: '💵 Cash', upi: '📱 UPI', khata: '📒 Khata' }
+  body.innerHTML = txns.map(t => {
+    const d = new Date(t.createdAt)
+    const dateStr = d.toLocaleDateString('en-IN') + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+    return '<tr>' +
+      '<td style="font-size:13px;padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--muted);">#' + t.id + '</td>' +
+      '<td style="font-size:13px;padding:10px 12px;border-bottom:0.5px solid var(--border);">' + t.customer + '</td>' +
+      '<td style="font-size:12px;padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--muted);">' + (t.phone || '') + '</td>' +
+      '<td style="font-size:13px;padding:10px 12px;border-bottom:0.5px solid var(--border);">' + (payLabel[t.payMode] || t.payMode) + '</td>' +
+      '<td style="font-size:12px;padding:10px 12px;border-bottom:0.5px solid var(--border);' + (t.disc > 0 ? 'color:#A32D2D;' : '') + '">' + (t.disc > 0 ? t.disc + '%' : '—') + '</td>' +
+      '<td style="font-size:13px;padding:10px 12px;border-bottom:0.5px solid var(--border);font-weight:500;">₹' + t.tot.toLocaleString('en-IN') + '</td>' +
+      '<td style="font-size:11px;padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--muted);">' + dateStr + '</td>' +
+      '<td style="font-size:13px;padding:10px 12px;border-bottom:0.5px solid var(--border);text-align:center;"><span style="color:var(--hint);font-size:11px;cursor:pointer;" onclick="window.reprintBill(' + t.id + ')">🖨️</span></td>' +
+      '</tr>'
+  }).join('')
+}
+window.renderAllTxnLog = renderAllTxnLog
 
 // ── EOD ──
 
@@ -610,10 +717,11 @@ window.showAddItemForm = function () {
     const el = document.getElementById(id)
     if (el) el.value = ''
   })
+  const config = getConfig()
   const cat = document.getElementById('item-cat')
-  if (cat) cat.value = 'Plumbing'
+  if (cat && config) cat.value = config.categories[0] || ''
   const unit = document.getElementById('item-unit')
-  if (unit) unit.value = 'pc'
+  if (unit && config) unit.value = config.units[0] || 'pc'
   document.getElementById('item-overlay').classList.add('on')
 }
 
@@ -635,8 +743,8 @@ window.editItem = function (id) {
 window.saveItem = function () {
   const name = document.getElementById('item-name')?.value?.trim()
   const hi = document.getElementById('item-hi')?.value?.trim() || ''
-  const cat = document.getElementById('item-cat')?.value || 'Misc'
-  const unit = document.getElementById('item-unit')?.value || 'pc'
+  const cat = document.getElementById('item-cat')?.value || (getConfig()?.categories?.[0] || 'General')
+  const unit = document.getElementById('item-unit')?.value || (getConfig()?.units?.[0] || 'pc')
   const price = +document.getElementById('item-price')?.value
   const cost = +document.getElementById('item-cost')?.value || 0
   const stock = +document.getElementById('item-stock')?.value || 0
@@ -751,7 +859,9 @@ window.showSub = function (role, tab, btn) {
   if (btn) btn.classList.add('on')
   if (role === 'counter' && tab === 'bill') { renderItemGrid(document.querySelector('.item-search')?.value); renderBill(); populateContractorSelect() }
   if (role === 'counter' && tab === 'check-khata') window.updateCounterKhata()
+  if (role === 'owner' && tab === 'dash') renderOwnerDash()
   if (role === 'owner' && tab === 'khata') window.updateOwnerKhata()
+  if (role === 'owner' && tab === 'all-bills') renderAllTxnLog()
   if (role === 'stock' && tab === 'inv') renderInventory(document.getElementById('inv-search')?.value, document.getElementById('inv-sort')?.value, document.getElementById('inv-cat')?.value)
 }
 

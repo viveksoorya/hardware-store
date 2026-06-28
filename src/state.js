@@ -1,33 +1,6 @@
 import { DB } from './db.js'
 
-export const SEED_ITEMS = [
-  {id:1,name:"GI Pipe",hi:"जीआई पाइप",cat:"Plumbing",unit:"ft",price:85,cost:60,stock:320},
-  {id:2,name:"PVC Pipe",hi:"पीवीसी पाइप",cat:"Plumbing",unit:"ft",price:35,cost:22,stock:480},
-  {id:3,name:"Copper Wire 2.5mm",hi:"तांबे का तार",cat:"Electrical",unit:"mtr",price:75,cost:55,stock:600},
-  {id:4,name:"MCB Switch",hi:"एमसीबी स्विच",cat:"Electrical",unit:"pc",price:180,cost:120,stock:45},
-  {id:5,name:"Cement Bag",hi:"सीमेंट",cat:"Construction",unit:"bag",price:380,cost:310,stock:8},
-  {id:6,name:"M-Seal",hi:"एम-सील",cat:"Plumbing",unit:"pc",price:65,cost:40,stock:60},
-  {id:7,name:'Paint Brush 4"',hi:"पेंट ब्रश",cat:"Paint",unit:"pc",price:90,cost:55,stock:30},
-  {id:8,name:"Angle Grinder Disc",hi:"ग्राइंडर डिस्क",cat:"Tools",unit:"pc",price:120,cost:80,stock:3},
-  {id:9,name:"3-pin Socket",hi:"सॉकेट",cat:"Electrical",unit:"pc",price:95,cost:60,stock:80},
-  {id:10,name:"Nuts & Bolts Set",hi:"नट-बोल्ट",cat:"Fasteners",unit:"set",price:45,cost:25,stock:150},
-  {id:11,name:"Plumber Tape",hi:"टेप",cat:"Plumbing",unit:"roll",price:25,cost:12,stock:90},
-  {id:12,name:"WD-40 Spray",hi:"डब्ल्यूडी-40",cat:"Tools",unit:"can",price:320,cost:220,stock:2},
-  {id:13,name:"Sandpaper",hi:"सैंडपेपर",cat:"Paint",unit:"sheet",price:15,cost:8,stock:200},
-  {id:14,name:"Cable Ties",hi:"केबल टाई",cat:"Electrical",unit:"pack",price:55,cost:30,stock:0},
-  {id:15,name:"CPVC Elbow",hi:"सीपीवीसी एल्बो",cat:"Plumbing",unit:"pc",price:28,cost:15,stock:180},
-]
-
-export const SEED_CONTRACTORS = [
-  {name:"Raju Construction",hi:"राजू कंस्ट्रक्शन",balance:28400,limit:50000,lastPaid:"3 days ago",overdue:false},
-  {name:"Suresh Builders",hi:"सुरेश बिल्डर्स",balance:45200,limit:40000,lastPaid:"18 days ago",overdue:true},
-  {name:"Mahesh & Sons",hi:"महेश एंड संस",balance:12800,limit:30000,lastPaid:"1 day ago",overdue:false},
-  {name:"Venkat Electricals",hi:"वेंकट इलेक्ट्रिकल्स",balance:8600,limit:20000,lastPaid:"5 days ago",overdue:false},
-  {name:"Ram Plumbers",hi:"राम प्लंबर्स",balance:18900,limit:25000,lastPaid:"22 days ago",overdue:true},
-  {name:"Lakshmi Interiors",hi:"लक्ष्मी इंटीरियर्स",balance:10600,limit:20000,lastPaid:"2 days ago",overdue:false},
-]
-
-// Internal state (not exported directly)
+let _config = null
 let _items = []
 let _contractors = []
 let _transactions = []
@@ -40,6 +13,8 @@ let _lastEODDate = ''
 let _cart = []
 let _payMode = 'cash'
 let _khataCustomers = []
+
+export function getConfig() { return _config }
 
 // --- Getters ---
 export function getItems() { return _items }
@@ -121,9 +96,10 @@ export function getTodayExpenses() {
 }
 
 // --- Init ---
-export function initState() {
-  _items = DB.load('items', SEED_ITEMS)
-  _contractors = DB.load('contractors', SEED_CONTRACTORS)
+export function initState(config) {
+  _config = config
+  _items = DB.load('items', config.seedItems)
+  _contractors = DB.load('contractors', config.seedContractors)
   _transactions = DB.load('transactions', [])
   _discountLog = DB.load('discountLog', [])
   _payments = DB.load('payments', [])

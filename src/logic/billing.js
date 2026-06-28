@@ -1,3 +1,5 @@
+import { getConfig } from '../state.js'
+
 // ── Cart operations (pure) ──
 
 export function addToCart(items, cart, itemId) {
@@ -148,19 +150,25 @@ export function applyBill(state, billData, payMode) {
 
 // ── Receipt builders (pure)  ──
 
+function shopInfo() {
+  const cfg = getConfig()
+  return { name: cfg?.name || 'Shop', tagline: cfg?.tagline || '' }
+}
+
 export function buildReceiptHTML(d, billCount, payMode) {
   const now = new Date()
   const t = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
   const dt = now.toLocaleDateString('en-IN')
   const pm = { cash: '💵 Cash', upi: '📱 UPI', khata: '📒 Khata / उधार' }
-  return '<div class="rcpt-logo"><b>Sharma Hardware & Electricals</b><small>Secunderabad, Hyderabad</small></div>' +
+  const info = shopInfo()
+  return '<div class="rcpt-logo"><b>' + info.name + '</b><small>' + info.tagline + '</small></div>' +
     '<hr class="rdiv">' +
     '<div class="rrow"><span><b>' + d.name + '</b></span><span style="color:#7A6A55;">Bill #' + billCount + '</span></div>' +
     '<div class="rrow" style="color:#7A6A55;font-size:11px;"><span>' + dt + ', ' + t + '</span><span>' + (pm[payMode] || payMode) + '</span></div>' +
     '<hr class="rdiv">' +
     d.items.map(c => '<div class="rrow"><span>' + c.name + ' × ' + c.qty + ' ' + (c.unit || '') + '</span><span>₹' + (c.price * c.qty) + '</span></div>').join('') +
     (d.discAmt > 0 ? '<div class="rrow" style="color:#A32D2D;"><span>Discount (' + d.disc + '%)</span><span>-₹' + d.discAmt + '</span></div>' : '') +
-    '<div class="rtot"><span>Total</span><span style="color:#185FA5;">₹' + d.tot.toLocaleString('en-IN') + '</span></div>' +
+    '<div class="rtot"><span>Total</span><span style="color:' + (getConfig()?.theme?.['--primary'] || '#185FA5') + ';">₹' + d.tot.toLocaleString('en-IN') + '</span></div>' +
     (payMode === 'upi' && d.upiRef ? '<div class="rrow" style="color:#7A6A55;font-size:11px;margin-top:4px;"><span>UPI Ref</span><span>' + d.upiRef + '</span></div>' : '') +
     '<div class="rfooter">Thank you for your business<br>धन्यवाद 🙏</div>' +
     '<div class="rbtns">' +
@@ -171,7 +179,8 @@ export function buildReceiptHTML(d, billCount, payMode) {
 export function buildWAMsg(d, billCount, payMode) {
   const pm = { cash: 'Cash', upi: 'UPI' + (d.upiRef ? ' (Ref: ' + d.upiRef + ')' : ''), khata: 'Khata / उधार' }
   const lines = d.items.map(c => '  ' + c.name + ' × ' + c.qty + ' ' + (c.unit || '') + ' — ₹' + (c.price * c.qty)).join('\n')
-  return '🔧 *Sharma Hardware & Electricals*\nSecunderabad, Hyderabad\n\nBill #' + billCount + ' | ' + new Date().toLocaleDateString('en-IN') +
+  const info = shopInfo()
+  return '* ' + info.name + '*\n' + info.tagline + '\n\nBill #' + billCount + ' | ' + new Date().toLocaleDateString('en-IN') +
     '\nCustomer: *' + d.name + '*\n\n' + lines +
     (d.discAmt > 0 ? '\n  Discount (' + d.disc + '%) — -₹' + d.discAmt : '') +
     '\n\n*Total: ₹' + d.tot.toLocaleString('en-IN') + '*\nPayment: ' + (pm[payMode] || payMode) +
@@ -181,14 +190,15 @@ export function buildWAMsg(d, billCount, payMode) {
 export function buildReprintHTML(txn) {
   const date = new Date(txn.createdAt)
   const pm = { cash: '💵 Cash', upi: '📱 UPI', khata: '📒 Khata / उधार' }
-  return '<div class="rcpt-logo"><b>Sharma Hardware & Electricals</b><small>Secunderabad, Hyderabad</small></div>' +
+  const info = shopInfo()
+  return '<div class="rcpt-logo"><b>' + info.name + '</b><small>' + info.tagline + '</small></div>' +
     '<div class="rrow"><span style="color:#7A6A55;font-size:11px;">Reprint from ' + date.toLocaleDateString('en-IN') + '</span></div>' +
     '<hr class="rdiv">' +
     '<div class="rrow"><span><b>' + txn.customer + '</b></span><span style="color:#7A6A55;">Bill #' + txn.id + '</span></div>' +
     '<hr class="rdiv">' +
     (txn.items || []).map(c => '<div class="rrow"><span>' + c.name + ' × ' + c.qty + '</span><span>₹' + (c.price * c.qty) + '</span></div>').join('') +
     (txn.discAmt > 0 ? '<div class="rrow" style="color:#A32D2D;"><span>Discount</span><span>-₹' + txn.discAmt + '</span></div>' : '') +
-    '<div class="rtot"><span>Total</span><span style="color:#185FA5;">₹' + txn.tot.toLocaleString('en-IN') + '</span></div>' +
+    '<div class="rtot"><span>Total</span><span style="color:' + (getConfig()?.theme?.['--primary'] || '#185FA5') + ';">₹' + txn.tot.toLocaleString('en-IN') + '</span></div>' +
     '<div class="rrow" style="color:#7A6A55;font-size:11px;">' + (pm[txn.payMode] || txn.payMode) + '</div>' +
     '<div class="rbtns"><button class="rbtn-close" onclick="window.closeOverlay(\'overlay\')">Close</button></div>'
 }
